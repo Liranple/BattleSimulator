@@ -1,0 +1,92 @@
+﻿.diceWord {
+    font-size: 20px;
+}
+
+.mainWord {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.subWord {
+    font-size: 20px;
+}
+
+.specialWord {
+    color: magenta;
+}
+
+.bounsWord {
+    color: gold;
+}
+
+.firstDice {
+    color: red;
+}
+
+.secondDice {
+    color: blue;
+}
+
+.thirdDice {
+    color: darkviolet;
+}
+
+
+#monsterHealthPoint {
+    background-color: black;
+    width: 180px;
+    border-radius: 6px;
+    color: white;
+}
+
+#displayPanel {
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    width: 760px;
+    height: 350px;
+    overflow-y: auto;
+    padding-left: 15px;
+}
+
+select {
+    border-radius: 5px;
+    background-color: black;
+    height: 35px;
+    width: 60px;
+    font-size: 20px;
+}
+
+button {
+    vertical-align: 6px;
+    background-color: dimgray;
+    height: 30px;
+    width: 60px;
+    border-radius: 15px;
+    color: white;
+    font-size: 18px;
+}
+
+div span {
+    letter-spacing: -0.6px;
+}
+
+input[type="checkbox"] {
+    zoom: 1.7;
+    vertical-align: -12%;
+}
+
+body {
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.box {
+    -ms-overflow-style: none;
+}
+    .box::-webkit-scrollbar {
+        display: none;
+    }

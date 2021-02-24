@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>BattleSimulator 0.10.0</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/script.js"></script>
+</head>
+<body>
+    <div style="max-width: 780px; width: 780px; overflow-x: scroll">
+        <h1 style="height: 60px">Battle Simulator 0.10.0</h1>
+        <div id="monsterPanel" style="height: 60px">
+            <div style="display: inline-block">
+                <span class="mainWord">
+                    HP
+                </span>
+                <input type="text" id="monsterHealthPoint" class="mainWord" onkeyup="onlyNumber(this)" />
+            </div>
+            <div style="display: inline-block; vertical-align: text-bottom">
+                <input type="checkbox" name="m-dice" checked disabled />
+                <span class="firstDice diceWord">
+                    몬스터 주사위
+                </span>
+
+                <input type="checkbox" name="m-dice" />
+                <span class="secondDice diceWord">
+                    몬스터 주사위
+                </span>
+
+                <input type="checkbox" name="m-dice" />
+                <span class="thirdDice diceWord">
+                    몬스터 주사위
+                </span>
+            </div>
+        </div>
+
+        <div id="playerPanel" style="font-size: 30px; height: 280px">
+            <div id="normalAttackPanel" style="display: inline-block; width: 36%">
+                <div>
+                    <span class="mainWord" style="display: inline-block; width: 80px">
+                        공격
+                    </span>
+                    <button type="button" onclick="normalAttack()">GO</button>
+                </div>
+                <div>
+                    <input type="checkbox" name="a-dice" checked disabled />
+                    <span class="firstDice diceWord">
+                        공격 주사위
+                    </span>
+                </div>
+                <div>
+                    <input type="checkbox" name="a-dice" />
+                    <span class="secondDice diceWord">
+                        공격 주사위
+                    </span>
+                </div>
+                <div>
+                    <input type="checkbox" name="a-dice" />
+                    <span class="thirdDice diceWord">
+                        공격 주사위
+                    </span>
+                </div>
+                <div>
+                    <select id="normal" class="weaponPoint; bounsWord">
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="subWord">
+                        무기 수치
+                    </span>
+                </div>
+                <div>
+                    <select id="armor" class="armorPoint; bounsWord">
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                    <span class="subWord">
+                        방어구 수치
+                    </span>
+                </div>
+            </div>
+
+            <div id="suddenAttackPanel" style="vertical-align: top; display: inline-block; width: 34%">
+                <div>
+                    <span class="mainWord" style="display: inline-block; width: 80px">
+                        기습
+                    </span>
+                    <button type="button" onclick="suddenAttack()">GO</button>
+                </div>
+                <div>
+                    <input type="checkbox" name="s-dice" checked disabled />
+                    <span class="firstDice diceWord">
+                        기습 주사위
+                    </span>
+                </div>
+                <div>
+                    <input type="checkbox" name="s-dice" />
+                    <span class="secondDice diceWord">
+                        기습 주사위
+                    </span>
+                </div>
+                <div>
+                    <input type="checkbox" name="s-dice" />
+                    <span class="thirdDice diceWord">
+                        기습 주사위
+                    </span>
+                </div>
+                <div>
+                    <select id="sudden" class="weaponPoint; bounsWord">
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="subWord">
+                        무기 수치
+                    </span>
+                </div>
+            </div>
+
+            <div id="stunPanel" style="vertical-align: top; display: inline-block">
+                <div>
+                    <span class="mainWord" style="display: inline-block; width: 110px; height: 150px">
+                        무력화
+                    </span>
+                    <button type="button" onclick="stunAttack()">GO</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="displayPanel"></div>
+    </div>
+</body>
+</html>
