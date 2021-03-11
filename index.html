@@ -1,142 +1,102 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="ko">
+
 <head>
     <meta charset="utf-8" />
-    <title>BattleSimulator 0.10.0</title>
+    <title>BattleSimulator 0.20.0</title>
     <link rel="stylesheet" href="./style.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <script src="./script.js"></script>
 </head>
+
 <body>
-    <div style="max-width: 780px; width: 780px; overflow-x: scroll">
-        <h1 style="height: 60px">Battle Simulator 0.10.0</h1>
-        <div id="monsterPanel" style="height: 60px">
-            <div style="display: inline-block">
-                <span class="mainWord">
-                    HP
-                </span>
-                <input type="text" id="monsterHealthPoint" class="mainWord" onkeyup="onlyNumber(this)" />
-            </div>
-            <div style="display: inline-block; vertical-align: text-bottom">
-                <input type="checkbox" name="m-dice" checked disabled />
-                <span class="firstDice diceWord">
-                    몬스터 주사위
-                </span>
-
-                <input type="checkbox" name="m-dice" />
-                <span class="secondDice diceWord">
-                    몬스터 주사위
-                </span>
-
-                <input type="checkbox" name="m-dice" />
-                <span class="thirdDice diceWord">
-                    몬스터 주사위
-                </span>
-            </div>
-        </div>
-
-        <div id="playerPanel" style="font-size: 30px; height: 280px">
-            <div id="normalAttackPanel" style="display: inline-block; width: 36%">
-                <div>
-                    <span class="mainWord" style="display: inline-block; width: 80px">
-                        공격
-                    </span>
-                    <button type="button" onclick="normalAttack()">GO</button>
+    <header class="header">
+        <h1 class="mainHeadline">Battle Simulator 0.20.0</h1>
+    </header>
+    <section class="section">
+        <article class="article">
+            <!-- ControlPanel -->
+            <div class="bs pb20">
+                <!-- TimerPanel -->
+                <div class="inline-block mr20 mb10">
+                    <b class="timer f22 mr10">00 : 00 : 00</b>
+                    <i class="fas fa-play timerStartPause f20 mr10" onclick="timerStartPause(this)"></i>
+                    <i class="fas fa-stop end f20 mr20" onclick="timerReset()"></i>
+                    <b class="turnText f20 color-magenta">0 턴</b>
                 </div>
-                <div>
-                    <input type="checkbox" name="a-dice" checked disabled />
-                    <span class="firstDice diceWord">
-                        공격 주사위
-                    </span>
+                <!-- MonsterPanel -->
+                <div class="inline-block mb10">
+                    <b class="f20">마물HP</b>
+                    <input type="text" class="monsterHpInput f20 mr10" onkeyup="onlyNumber(this)" />
+                    <input type="checkbox" class="atkBox mBox z15" checked disabled />
+                    <b class="f20">기본</b>
+                    <input type="checkbox" class="atkBox mBox z15" />
+                    <b class="f20">더블</b>
+                    <input type="checkbox" class="atkBox mBox z15" />
+                    <b class="f20">트리플</b>
                 </div>
-                <div>
-                    <input type="checkbox" name="a-dice" />
-                    <span class="secondDice diceWord">
-                        공격 주사위
-                    </span>
-                </div>
-                <div>
-                    <input type="checkbox" name="a-dice" />
-                    <span class="thirdDice diceWord">
-                        공격 주사위
-                    </span>
-                </div>
-                <div>
-                    <select id="normal" class="weaponPoint; bounsWord">
-                        <option value="0">0</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="40">40</option>
-                        <option value="50">50</option>
-                    </select>
-                    <span class="subWord">
-                        무기 수치
-                    </span>
-                </div>
-                <div>
-                    <select id="armor" class="armorPoint; bounsWord">
-                        <option value="0">0</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                    </select>
-                    <span class="subWord">
-                        방어구 수치
-                    </span>
+                <!-- ActionPanel -->
+                <div class="mt10">
+                    <button type="button" class="sheetBtn charSheetAdd f16" onclick="addCharSheet()">+</button>
+                    <button type="button" class="sheetBtn charSheetDel f16 mr20">-</button>
+                    <button type="button" data-key="attack" class="atkBtn f16" onclick="atkBoxCheck()">공격</button>
+                    <button type="button" data-key="sudden" class="atkBtn f16">기습</button>
+                    <button type="button" data-key="stun" class="atkBtn f16 mr20">무력화</button>
+                    <button type="button" data-value="10" class="healBtn f16">10회복</button>
+                    <button type="button" data-value="30" class="healBtn f16">30회복</button>
+                    <button type="button" data-value="50" class="healBtn f16">50회복</button>
+                    <button type="button" data-value="100" class="healBtn f16">100회복</button>
                 </div>
             </div>
-
-            <div id="suddenAttackPanel" style="vertical-align: top; display: inline-block; width: 34%">
-                <div>
-                    <span class="mainWord" style="display: inline-block; width: 80px">
-                        기습
-                    </span>
-                    <button type="button" onclick="suddenAttack()">GO</button>
-                </div>
-                <div>
-                    <input type="checkbox" name="s-dice" checked disabled />
-                    <span class="firstDice diceWord">
-                        기습 주사위
-                    </span>
-                </div>
-                <div>
-                    <input type="checkbox" name="s-dice" />
-                    <span class="secondDice diceWord">
-                        기습 주사위
-                    </span>
-                </div>
-                <div>
-                    <input type="checkbox" name="s-dice" />
-                    <span class="thirdDice diceWord">
-                        기습 주사위
-                    </span>
-                </div>
-                <div>
-                    <select id="sudden" class="weaponPoint; bounsWord">
-                        <option value="0">0</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="40">40</option>
-                        <option value="50">50</option>
-                    </select>
-                    <span class="subWord">
-                        무기 수치
-                    </span>
+            <!-- CharacterPanel -->
+            <div class="charPanel pt10">
+                <div class="charSheet">
+                    <div class="pb10 inline-block">
+                        <input id="switch" type="checkbox" name="switch" class="input_on-off"/>
+                        <label for="switch" class="label_on-off" onclick="charSelect(this)"></label>
+                        <input type="text" class="charName f18 mr5" />
+                        <input type="checkbox" class="atkBox pBox z13" checked disabled />
+                        <span class="f18">기본</span>
+                        <input type="checkbox" class="atkBox pBox z13" />
+                        <span class="f18">더블</span>
+                        <input type="checkbox" class="atkBox pBox z13" />
+                        <span class="f18 mr5">트리플</span>
+                        <select class="weaponBonus f18">
+                            <option value="0">무기</option>
+                            <option value="0">0</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                        <select class="armorBonus f18 mr5">
+                            <option value="0">방어</option>
+                            <option value="0">0</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
+                    <div class="inline-block statOutput">
+                        <meter class="charHp mr5" low="150" high="350" optimum="500" value="500" max="500" data-label="500/500"></meter>
+                        <div class="charRecenActTxt inline-block">일반 공격 (공격 횟수2)</div>
+                        
+                    </div>
                 </div>
             </div>
-
-            <div id="stunPanel" style="vertical-align: top; display: inline-block">
-                <div>
-                    <span class="mainWord" style="display: inline-block; width: 110px; height: 150px">
-                        무력화
-                    </span>
-                    <button type="button" onclick="stunAttack()">GO</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="displayPanel"></div>
-    </div>
+        </article>
+        <!-- BattleLogPanel -->
+        <aside class="aside">
+            <div class="battleLog f18"></div>
+        </aside>
+    </section>
+    <footer class="footer f14">
+        <p>히사랑게임즈 대표이사 김희찬</p>
+        <p>TEL : 010-1234-5678 | FAX : 02-0000-0000 | Liranple@gmail.com</p>
+        <p>Copyright 2021. H:LoveGames Co. All rights reserved.</p>
+    </footer>
 </body>
+
 </html>
