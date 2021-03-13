@@ -2,45 +2,38 @@
 * {
     box-sizing: border-box;
 }
-
+html::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+}
 html, body {
     margin: 0px;
 
     height: 100%;
 }
 button {
-    border-radius: 7px;
-    border-style: double;
-
-    cursor: pointer;
+    border-radius: 6px;
 }
 button:active {
     background-color: white;
 }
-button:focus, textarea:focus, input:focus {
+button:focus, textarea:focus, input:focus, select:focus {
     outline: none;
 }
-span, b, h1, select, button {
+span, b, h1, select, button, label {
     user-select: none;
 }
 
 /* tag type */
 
-input[name='switch'] {
-    display: none;
+input[type="checkbox"] {
+    margin-left: 2px;
 }
-input[type='checkbox'] {
-    vertical-align: -1px;
-
-    margin-right: -0.5px;
-    margin-left: -0.5px;
-}
-input[type='text'], select {
+input[type="text"], select {
     border-radius: 4px;;
 }
 
-
-/* class */
+/* utils class */
 
 .inline-block {
     display: inline-block;
@@ -52,12 +45,18 @@ input[type='text'], select {
 .pt20 {
     padding-top: 20px;
 }
+
 .pb10 {
     padding-bottom: 10px;
 }
 .pb20 {
     padding-bottom: 20px;
 }
+
+.pl5 {
+    padding-left: 5px;
+}
+
 .mt10 {
     margin-top: 10px;
 }
@@ -67,14 +66,22 @@ input[type='text'], select {
 .mt20 {
     margin-top: 20px;
 }
+
+.mb5 {
+    margin-bottom: 5px;
+}
 .mb10 {
     margin-bottom: 10px;
 }
+
 .mr5 {
     margin-right: 5px;
 }
 .mr10 {
     margin-right: 10px;
+}
+.mr15 {
+    margin-right: 15px;
 }
 .mr20 {
     margin-right: 20px;
@@ -83,6 +90,9 @@ input[type='text'], select {
     margin-right: 40px;
 }
 
+.ml5 {
+    margin-left: 5px;
+}
 
 .f14 {
     font-size: 14px;
@@ -99,25 +109,34 @@ input[type='text'], select {
 .f22 {
     font-size: 22px;
 }
-
-.color-magenta {
-    color: magenta;
+.f24 {
+    font-size: 24px;
 }
-.color-red {
-    color: red;
+.f26 {
+    font-size: 26px;
+}
+.f28 {
+    font-size: 28px;
+}
+.f30 {
+    font-size: 30px;
 }
 
-.z13 {
-    zoom: 1.3;
+.z14 {
+    zoom: 1.4;
 }
 .z15 {
     zoom: 1.5;
 }
 
 .bs {
-    box-shadow: 0 3px 2px -2px gray
+    box-shadow: 0 4px 3px -2px gray
+}
+.b {
+    font-weight: bold;
 }
 
+/* normal class */
 
 .header {
     display: flex;
@@ -135,10 +154,14 @@ input[type='text'], select {
     min-height: 650px;
 }
 .article {
+    display: flex;
+    flex-direction: column;
+
     padding: 10px;
     
     width: 65%;
-    min-width: 700px;
+    min-width: 740px;
+    height: 100%;
 }
 .aside {
     padding: 10px;
@@ -163,60 +186,161 @@ input[type='text'], select {
     background-color: lightgray;
     line-height: 0px;
 }
-
-
-.mainHeadline {
+.fas, button, .checkbox-txt, input[type="checkbox"]{
+    cursor: pointer;
+}
+.main-headline {
     margin-left: 0.5cm;
 
     color: white;
 }
-.fas {
-    cursor: pointer;
-}
-
-.monsterHpInput {
-    width: 3cm;
-}
-.sheetBtn {
-    width: 30px;
-}
-.atkBtn {
-    width: 70px;
-
-    background-color: #F0E68C;
-}
-.atkBtn:active {
-    background-color: #BDB76B;
-}
-.healBtn {
-    width: 80px;
-
-    background-color: #90EE90;
-}
-.healBtn:active {
-    background-color: #32CD32;
-}
-.charPanel {
-    overscroll-behavior-y: inherit;
-    overflow-y: scroll;
-}
-.charName {
-    vertical-align: 2px;
-
-    width: 4cm;
-}
-.charHp {
-    position: relative;
-    vertical-align: -11.5px;
+.top-panel, .action-panel {
+    display: flex;
     
     height: 35px;
-    width: 3.5cm;
+}
+.top-panel > b, i, input, label{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.action-panel > i, button {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.timer-start-pause, .timer-end {
+    position: relative;
+    top: 1px;
+}
+.turn-text {
+    color: #6610f2;
+}
+.monster-hp-input {
+    padding: 7px 7px;
+    border: 2px solid #bdc3c0;
+
+    height: 30px;
+    width: 130px;
+
+    font-weight: bold;
+    background-color: #fff;
+    color: #495057;
+}
+.monster-hp-input:disabled {
+    background-color: #ddd;
+    color: #495057;
+}
+.m-box, .p-box {
+    position: relative;
+    top: 1px;
+}
+.atk-btn {
+    border: 2px solid #D8A406;
+    height: 28px;
+    width: 70px;
+
+    background-color: #fab134;
+    color: #fff;
+    
+    background-repeat: no-repeat;
+    filter: none;
+    transition: background-color .2s;
+}
+.atk-btn:hover {
+    background-color: #d37e05;
+    color: #fff;
+}
+.atk-btn:active {
+    background-color: #9e5f04;
+}
+.heal-btn {
+    border: 2px solid #42b142;
+
+    height: 28px;
+    width: 80px;
+
+    background-color: #78cc78;
+    color: #fff;
+    
+    background-repeat: no-repeat;
+    filter: none;
+    transition: background-color .2s;
+}
+.heal-btn:hover {
+    background-color: #379337;
+}
+.heal-btn:active {
+    background-color: #105206;
+}
+.char-panel {
+    flex: 1;
+
+    overflow-y: auto;
+}
+.char-panel::-webkit-scrollbar {
+    padding-top: 10px;
+
+    width: 12px;
+}
+.char-panel::-webkit-scrollbar-track {
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 5px white;
+
+    background-color: white;
+}
+.char-panel::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background-color: lightslategray;
+}
+.char-sheet {
+    display: flex;
+    align-items: center;
+
+    height: 40px;
+}
+.input_on-off {
+    display: none;
+}
+.switch_on-off {
+    margin-right: 2px;
+    
+    border-radius: 9px;
+    height: 25px;
+    width: 18px;
+    
+    background-color: #ed4956;
+    color: #fff;
+
+    cursor: pointer;
+    transition: background-color .2s;
+}
+.input_on-off:checked + .switch_on-off {
+    background-color: #0bba82;
+}
+.char-name {
+    border: 2px solid #bdc3c0;
+    padding: 7px 7px;
+
+    height: 30px;
+    width: 200px;
+
+    background-color: #fff;
+    color: #495057;
+}
+.weapon-bonus, .armor-bonus {
+    height: 24px;
+}
+.char-hp {
+    position: relative;
+    
+    height: 40px;
+    width: 3cm;
     
     text-align: center;
 }
-.charHp:before {
+.char-hp:before {
     position: absolute;
-    top: 7px;
+    top: 9px;
     left: 0;
     right: 0;
 
@@ -224,42 +348,21 @@ input[type='text'], select {
     font-size: 15px;
     font-weight: bold;
 }
-.charRecenActTxt {
+.char-recen-act-txt {
     padding-left: 10px;
     padding-right: 10px;
 
     border-radius: 4px;
     height: 24px;
-    width: 230px;
+    width: 220px;
 
     background-color: black;
     color: white;
 }
-.label_on-off {
-    display: inline-block;
-    position: relative;
-    top: 6px;
-
-    margin-right: 2px;
-    
-    border-radius: 10px;
-    height: 28px;
-    width: 20px;
-    
-    background-color: #ed4956;
-    color: #fff;
-
-    cursor: pointer;
-    overflow: hidden;
-    transition: all .3s;
-}
-.input_on-off:checked + .label_on-off {
-    background-color: #0bba82;
-}
 
 
-@media screen and (max-width: 1450px) {
-    .charRecenActTxt {
+@media screen and (max-width: 1480px) {
+    .char-recen-act-txt {
         display: none;
     }
 }

@@ -2,17 +2,21 @@ var time = 0;
 var running = false;
 var timerid = 0;
 
+var charSheetTxt;
 var charSheet;
+var charPanel;
 
-var playerAtk;
-var monsterAtk;
+var charName;
+var charAtk;
+var monAtk;
 var stun = false;
 var scar = false;
 
-window.onload = function () {
-    charSheet = document.getElementsByClassName("charSheet")[0]
-};
 
+window.onload = function () {
+    charSheetTxt = document.getElementsByClassName("char-sheet")[0].innerHTML;
+    charPanel = document.getElementsByClassName("char-panel")[0];
+}
 
 function onlyNumber(input) {
     if (isNaN(Number(input.value))) {
@@ -33,7 +37,8 @@ function onlyNumber(input) {
 
 function timerStartPause(e) {
     if (!running) {
-        document.getElementsByClassName("turnText")[0].innerText="1 턴";
+        document.getElementsByClassName("turn-text")[0].innerText = "1";
+        document.getElementsByClassName("monster-hp-input")[0].disabled = true;
         running = true;
         increment();
         e.classList.replace("fa-play", "fa-pause");
@@ -48,9 +53,11 @@ function timerReset() {
     time = 0;
     running = false;
     clearTimeout(timerid);
-    document.getElementsByClassName("timer")[0].innerText="00 : 00 : 00";
-    document.getElementsByClassName("timerStartPause")[0].classList.replace("fa-pause", "fa-play");
-    document.getElementsByClassName("turnText")[0].innerText="0 턴";
+    document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
+    document.getElementsByClassName("timer-start-pause")[0].classList.replace("fa-pause", "fa-play");
+    document.getElementsByClassName("turn-text")[0].innerText = "0";
+    document.getElementsByClassName("monster-hp-input")[0].disabled = false;
+    document.getElementsByClassName("monster-hp-input")[0].innerText = "0";
 
 }
 function increment() {
@@ -60,7 +67,7 @@ function increment() {
             var hours = Math.floor(time / 3600);
             var mins = Math.floor(time % 3600 / 60);
             var secs = time % 3600 % 60;
-            var turn = Math.floor((mins/15)+1);
+            var turn = Math.floor((hours*4)+(mins/15)+1);
             if (hours < 10) {
                 hours = "0" + hours;
             }
@@ -70,7 +77,7 @@ function increment() {
             if (secs < 10) {
                 secs = "0" + secs;
             }
-            document.getElementsByClassName("turnText")[0].innerText=`${turn} 턴`;
+            document.getElementsByClassName("turn-text")[0].innerText=`${turn}`;
             document.getElementsByClassName("timer")[0].innerText=`${hours} : ${mins} : ${secs}`;
             increment();
         }, 10)
@@ -78,7 +85,15 @@ function increment() {
 }
 
 function addCharSheet() {
-    document.getElementsByClassName("charPanel")[0].innerHTML += charSheet.innerHTML;
+    charSheet = document.createElement("div");
+    charSheet.innerHTML = charSheetTxt;
+    charSheet.classList = "char-sheet inline-block";
+    charPanel.appendChild(charSheet);
+}
+function delCharSheet() {
+    if (document.getElementsByClassName("char-sheet").length > 1) {
+        charPanel.removeChild(charSelectCheck());
+    }
 }
 
 function chanceCalc(persent) {
@@ -90,7 +105,7 @@ function chanceCalc(persent) {
     return result;
 }
 function atkBoxCheck(e) {
-    var atkBox = document.getElementsByClassName(e);
+    var atkBox = charSelectCheck().getElementsByClassName(e);
     var atkCount = 0;
     var chanceTable = new Array(2, 7, 17, 37, 67, 107, 157, 217, 267, 307);
 
@@ -112,31 +127,34 @@ function atkBoxCheck(e) {
     }
     return damage;
 }
-function charSelect(e) {
-    var char = document.getElementsByName("switch");
-    for (let i = 0; i < char.length; i++) {
-        if (char[i] != e) {
-            char.checked = false;
+function charSelectCheck() {
+    var checkbox = document.getElementsByClassName("input_on-off");
+    for (let i = 0; i < checkbox.length; i++) {
+        if (checkbox[i].checked == true) {
+            return checkbox[i].parentNode;
         }
     }
 }
 
-function charCheck() {
-    
-
-}
-
 function ready() {
-    playerAtk = atkBoxCheck("pBox");
-    monsterAtk = atkBoxCheck("mBox");
-
+    charName = charSelectCheck().getElementsByClassName("char-name")[0].value;
+    charAtk = atkBoxCheck("p-box");
+    monAtk = atkBoxCheck("m-box");
 }
 
-function normalAttack() {
+function normalAtk() {
+    ready();
     var critical = chanceCalc(30);
-    var log;
+    var log = `${charName}의 `;
+    var totalDamage = 0;
     if (critical) {
-        log = ""
+        log += "크리티컬 공격! 1.5 X ";
+    }
+    else {
+        log += "공격! ";
+    }
+    for (let i = 0; i < charAtk.length; i++) {
+        log += 
     }
 }
 

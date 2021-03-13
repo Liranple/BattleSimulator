@@ -5,85 +5,90 @@
 <head>
     <meta charset="utf-8" />
     <title>BattleSimulator 0.20.0</title>
-    <link rel="stylesheet" href="./style.css" />
+    <link href="./style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <script src="./script.js"></script>
 </head>
 
 <body>
+
     <header class="header">
-        <h1 class="mainHeadline">Battle Simulator 0.20.0</h1>
+        <h1 class="main-headline">Battle Simulator 0.20.0</h1>
     </header>
     <section class="section">
         <article class="article">
             <!-- ControlPanel -->
-            <div class="bs pb20">
+            <div class="bs pb10 pl5">
                 <!-- TimerPanel -->
-                <div class="inline-block mr20 mb10">
-                    <b class="timer f22 mr10">00 : 00 : 00</b>
-                    <i class="fas fa-play timerStartPause f20 mr10" onclick="timerStartPause(this)"></i>
-                    <i class="fas fa-stop end f20 mr20" onclick="timerReset()"></i>
-                    <b class="turnText f20 color-magenta">0 턴</b>
-                </div>
-                <!-- MonsterPanel -->
-                <div class="inline-block mb10">
-                    <b class="f20">마물HP</b>
-                    <input type="text" class="monsterHpInput f20 mr10" onkeyup="onlyNumber(this)" />
-                    <input type="checkbox" class="atkBox mBox z15" checked disabled />
-                    <b class="f20">기본</b>
-                    <input type="checkbox" class="atkBox mBox z15" />
-                    <b class="f20">더블</b>
-                    <input type="checkbox" class="atkBox mBox z15" />
-                    <b class="f20">트리플</b>
+                <div class="top-panel mb10">
+                    <!-- TimerPanel -->
+                    <b class="timer f26 mr15">00 : 00 : 00</b>
+                    <i class="fas fa-play timer-start-pause f20 mr10" onclick="timerStartPause(this)"></i>
+                    <i class="fas fa-stop timer-end f20 mr15" onclick="timerReset()"></i>
+                    <b class="turn-text f22 mr10">0</b>
+                    <b class="turn-text f20 mr10"> 턴</b>
+                    <!-- MonsterPanel -->
+                    <b class="f20 mr5">마물HP</b>
+                    <input type="text" class="monster-hp-input f18 mr5" tabindex="1" onkeyup="onlyNumber(this)" />
+                    <label class="f20 checkbox-txt b mr5">
+                        <input type="checkbox" class="atk-box m-box z15" checked disabled />기본
+                    </label>
+                    <label class="f20 checkbox-txt b mr5">
+                        <input type="checkbox" class="atk-box m-box z15" />더블
+                    </label>
+                    <label class="f20 checkbox-txt b">
+                        <input type="checkbox" class="atk-box m-box z15" />트리플
+                    </label>
                 </div>
                 <!-- ActionPanel -->
-                <div class="mt10">
-                    <button type="button" class="sheetBtn charSheetAdd f16" onclick="addCharSheet()">+</button>
-                    <button type="button" class="sheetBtn charSheetDel f16 mr20">-</button>
-                    <button type="button" data-key="attack" class="atkBtn f16" onclick="atkBoxCheck()">공격</button>
-                    <button type="button" data-key="sudden" class="atkBtn f16">기습</button>
-                    <button type="button" data-key="stun" class="atkBtn f16 mr20">무력화</button>
-                    <button type="button" data-value="10" class="healBtn f16">10회복</button>
-                    <button type="button" data-value="30" class="healBtn f16">30회복</button>
-                    <button type="button" data-value="50" class="healBtn f16">50회복</button>
-                    <button type="button" data-value="100" class="healBtn f16">100회복</button>
+                <div class="action-panel">
+                    <i class="fas fa-plus-square char-sheet-add f28 mr10" onclick="addCharSheet()"></i>
+                    <i class="fas fa-minus-square char-sheet-del f28 mr20" onclick="delCharSheet()"></i>
+                    <button type="button" data-key="attack" class="atk-btn f16 mr5" onclick="normalAtk()">공격</button>
+                    <button type="button" data-key="sudden" class="atk-btn f16 mr5">기습</button>
+                    <button type="button" data-key="stun" class="atk-btn f16 mr20">무력화</button>
+                    <button type="button" data-value="10" class="heal-btn f16 mr5">10회복</button>
+                    <button type="button" data-value="30" class="heal-btn f16 mr5">30회복</button>
+                    <button type="button" data-value="50" class="heal-btn f16 mr5">50회복</button>
+                    <button type="button" data-value="100" class="heal-btn f16">100회복</button>
                 </div>
             </div>
             <!-- CharacterPanel -->
-            <div class="charPanel pt10">
-                <div class="charSheet">
-                    <div class="pb10 inline-block">
-                        <input id="switch" type="checkbox" name="switch" class="input_on-off"/>
-                        <label for="switch" class="label_on-off" onclick="charSelect(this)"></label>
-                        <input type="text" class="charName f18 mr5" />
-                        <input type="checkbox" class="atkBox pBox z13" checked disabled />
-                        <span class="f18">기본</span>
-                        <input type="checkbox" class="atkBox pBox z13" />
-                        <span class="f18">더블</span>
-                        <input type="checkbox" class="atkBox pBox z13" />
-                        <span class="f18 mr5">트리플</span>
-                        <select class="weaponBonus f18">
-                            <option value="0">무기</option>
-                            <option value="0">0</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                        </select>
-                        <select class="armorBonus f18 mr5">
-                            <option value="0">방어</option>
-                            <option value="0">0</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                        </select>
-                    </div>
-                    <div class="inline-block statOutput">
-                        <meter class="charHp mr5" low="150" high="350" optimum="500" value="500" max="500" data-label="500/500"></meter>
-                        <div class="charRecenActTxt inline-block">일반 공격 (공격 횟수2)</div>
-                        
-                    </div>
+            <div class="char-panel mt10">
+                <div class="char-sheet inline-block">
+                    <label>
+                        <input type="radio" name="switch" class="input_on-off" />
+                        <div class="switch_on-off"></div>
+                    </label>
+                    <input type="text" class="char-name f16 ml5 mr5" placeholder="캐릭터 이름" tabindex="1" />
+                    <label class="checkbox-txt f18 mr5">
+                        <input type="checkbox" class="atk-box p-box z14" checked disabled />기본
+                    </label>
+                    <label class="checkbox-txt f18 mr5">
+                        <input type="checkbox" class="atk-box p-box z14" />더블
+                    </label>
+                    <label class="checkbox-txt f18 mr10">
+                        <input type="checkbox" class="atk-box p-box z14" />트리플
+                    </label>
+                    <select class="weapon-bonus f16 mr5">
+                        <option value="0" selected>무기</option>
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
+                    <select class="armor-bonus f16 mr10">
+                        <option value="0" selected>방어</option>
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+                    <meter class="char-hp mr10" low="150" high="350" optimum="500" value="500" max="500"
+                        data-label="500/500"></meter>
+                    <div class="char-recen-act-txt inline-block"></div>
                 </div>
             </div>
         </article>
