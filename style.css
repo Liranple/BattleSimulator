@@ -164,7 +164,10 @@ input[type="text"], select {
     height: 100%;
 }
 .aside {
+    display: flex;
+
     padding: 10px;
+    padding-left: 14px;
 
     width: 35%;
     min-width: 300px;
@@ -199,15 +202,11 @@ input[type="text"], select {
     
     height: 35px;
 }
-.top-panel > b, i, input, label{
+.top-panel > b, i, input, label, .action-panel > i, button{
     margin-top: auto;
     margin-bottom: auto;
 }
-.action-panel > i, button {
-    margin-top: auto;
-    margin-bottom: auto;
-}
-.timer-start-pause, .timer-end {
+.timer-start-pause, .timer-end, .m-box, .p-box {
     position: relative;
     top: 1px;
 }
@@ -228,10 +227,6 @@ input[type="text"], select {
 .monster-hp-input:disabled {
     background-color: #ddd;
     color: #495057;
-}
-.m-box, .p-box {
-    position: relative;
-    top: 1px;
 }
 .atk-btn {
     border: 2px solid #D8A406;
@@ -271,12 +266,12 @@ input[type="text"], select {
 .heal-btn:active {
     background-color: #105206;
 }
-.char-panel {
+.char-panel, .battle-log-panel {
     flex: 1;
 
     overflow-y: auto;
 }
-.char-panel::-webkit-scrollbar {
+.char-panel::-webkit-scrollbar, .battle-log-panel::-webkit-scrollbar {
     padding-top: 10px;
 
     width: 12px;
@@ -291,6 +286,17 @@ input[type="text"], select {
     border-radius: 10px;
 
     background-color: lightslategray;
+}
+.battle-log-panel::-webkit-scrollbar-track {
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 5px #000;
+
+    background-color: #000;
+}
+.battle-log-panel::-webkit-scrollbar-thumb  {
+    border-radius: 10px;
+
+    background-color: #eee;
 }
 .char-sheet {
     display: flex;
