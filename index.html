@@ -23,14 +23,14 @@
                 <div class="top-panel mb10">
                     <!-- TimerPanel -->
                     <b class="timer f26 mr15">00 : 00 : 00</b>
-                    <i class="fas fa-play timer-start-pause f20 mr10" onclick="timerStartPause(this)"></i>
-                    <i class="fas fa-stop timer-end f20 mr15" onclick="timerReset()"></i>
-                    <b class="turn-text f22 mr10">0</b>
-                    <b class="turn-text f20 mr10"> 턴</b>
+                    <i class="fas fa-play timer-start-pause f20 mr10" onclick="battleStartPause(this)"></i>
+                    <i class="fas fa-stop timer-end f20 mr10" onclick="battleReset()"></i>
+                    <b class="turn-text f22">0</b>
+                    <b class="turn-text f20 mr10">턴</b>
                     <!-- MonsterPanel -->
                     <b class="f20 mr5">마물HP</b>
-                    <input type="text" class="monster-hp-input f20 mr5" tabindex="1" onkeyup="onlyNumber(this)" />
-                    <label class="f20 checkbox-txt b mr5">
+                    <input type="number" class="monster-hp-input f20 mr5" tabindex="1" />
+                    <label class="f20 b mr5">
                         <input type="checkbox" class="atk-box m-box z15" checked disabled />기본
                     </label>
                     <label class="f20 checkbox-txt b mr5">
@@ -44,13 +44,13 @@
                 <div class="action-panel">
                     <i class="fas fa-plus-square char-sheet-add f28 mr10" onclick="addCharSheet()"></i>
                     <i class="fas fa-minus-square char-sheet-del f28 mr20" onclick="delCharSheet()"></i>
-                    <button type="button" data-key="attack" class="atk-btn f16 mr5" onclick="playerAction(this)">공격</button>
-                    <button type="button" data-key="sudden" class="atk-btn f16 mr5" onclick="playerAction(this)">기습</button>
-                    <button type="button" data-key="stun" class="atk-btn f16 mr20" onclick="playerAction(this)">무력화</button>
-                    <button type="button" data-key="heal" data-value="10" class="heal-btn f16 mr5" onclick="playerAction(this)">10회복</button>
-                    <button type="button" data-key="heal" data-value="30" class="heal-btn f16 mr5" onclick="playerAction(this)">30회복</button>
-                    <button type="button" data-key="heal" data-value="50" class="heal-btn f16 mr5" onclick="playerAction(this)">50회복</button>
-                    <button type="button" data-key="heal" data-value="100" class="heal-btn f16" onclick="playerAction(this)">100회복</button>
+                    <button type="button" data-key="attack" class="atk-btn f16 mr5 b" onclick="playerAction(this)" disabled>공격</button>
+                    <button type="button" data-key="sudden" class="atk-btn f16 mr5 b" onclick="playerAction(this)" disabled>기습</button>
+                    <button type="button" data-key="stun" class="atk-btn f16 mr20 b" onclick="playerAction(this)" disabled>무력화</button>
+                    <button type="button" data-key="heal" data-value="10" class="heal-btn f16 mr5 b" onclick="playerAction(this)">10회복</button>
+                    <button type="button" data-key="heal" data-value="30" class="heal-btn f16 mr5 b" onclick="playerAction(this)">30회복</button>
+                    <button type="button" data-key="heal" data-value="50" class="heal-btn f16 mr5 b" onclick="playerAction(this)">50회복</button>
+                    <button type="button" data-key="heal" data-value="100" class="heal-btn f16 b" onclick="playerAction(this)">100회복</button>
                 </div>
             </div>
             <!-- CharacterPanel -->
@@ -61,7 +61,7 @@
                         <div class="switch_on-off"></div>
                     </label>
                     <input type="text" class="char-name f16 ml5 mr5" placeholder="캐릭터 이름" tabindex="1" />
-                    <label class="checkbox-txt f18 mr5">
+                    <label class="f18 mr5">
                         <input type="checkbox" class="atk-box p-box z14" checked disabled />기본
                     </label>
                     <label class="checkbox-txt f18 mr5">
@@ -87,14 +87,14 @@
                         <option value="30">30</option>
                     </select>
                     <meter class="char-hp mr10" low="150" high="350" optimum="500" value="500" max="500"
-                        data-label="500/500"></meter>
-                    <div class="char-recen-act-txt inline-block" data-value></div>
+                        data-label="500 / 500"></meter>
+                    <div class="char-recen-act-txt f14 inline-block" data-key='{"attack": 0, "sudden": 0, "stun": 0, "heal": 0, "action": false}'></div>
                 </div>
             </div>
         </article>
         <!-- BattleLogPanel -->
         <aside class="aside">
-            <div class="battle-log-panel f16"></div>
+            <div class="battle-log-panel f14"></div>
         </aside>
     </section>
     <footer class="footer f14">

@@ -29,7 +29,7 @@ span, b, h1, select, button, label {
 input[type="checkbox"] {
     margin-left: 2px;
 }
-input[type="text"], select {
+input[type="text"], input[type="number"], select {
     border-radius: 4px;;
 }
 
@@ -129,6 +129,15 @@ input[type="text"], select {
     zoom: 1.5;
 }
 
+.caution {
+    color: #ed4956;
+}
+.warning {
+    color: #ed9349;
+}
+.system {
+    color: #8849ed;
+}
 .bs {
     box-shadow: 0 4px 3px -2px gray
 }
@@ -170,7 +179,7 @@ input[type="text"], select {
     padding-left: 14px;
 
     width: 35%;
-    min-width: 300px;
+    min-width: 550px;
 
     background-color: black;
     color: white;
@@ -189,7 +198,7 @@ input[type="text"], select {
     background-color: lightgray;
     line-height: 0px;
 }
-.fas, button, .checkbox-txt, input[type="checkbox"]{
+.fas, button:enabled, .checkbox-txt, input[type="checkbox"]:enabled {
     cursor: pointer;
 }
 .main-headline {
@@ -211,6 +220,8 @@ input[type="text"], select {
     top: 1px;
 }
 .turn-text {
+    width: 25px;
+    text-align: center;
     color: #6610f2;
 }
 .monster-hp-input {
@@ -240,11 +251,14 @@ input[type="text"], select {
     filter: none;
     transition: background-color .2s;
 }
-.atk-btn:hover {
+.atk-btn:disabled {
     background-color: #d37e05;
-    color: #fff;
+    color: #9e5f04;
 }
-.atk-btn:active {
+.atk-btn:enabled:hover {
+    background-color: #d37e05;
+}
+.atk-btn:enabled:active {
     background-color: #9e5f04;
 }
 .heal-btn {
@@ -260,10 +274,14 @@ input[type="text"], select {
     filter: none;
     transition: background-color .2s;
 }
-.heal-btn:hover {
+.heal-btn:disabled {
+    background-color: #379337;
+    color: #105206;
+}
+.heal-btn:enabled:hover {
     background-color: #379337;
 }
-.heal-btn:active {
+.heal-btn:enabled:active {
     background-color: #105206;
 }
 .char-panel, .battle-log-panel {
@@ -360,14 +378,14 @@ input[type="text"], select {
 
     border-radius: 4px;
     height: 24px;
-    width: 220px;
+    width: 170px;
 
     background-color: black;
     color: white;
 }
 
 
-@media screen and (max-width: 1480px) {
+@media screen and (max-width: 1450px) {
     .char-recen-act-txt {
         display: none;
     }
