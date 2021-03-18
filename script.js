@@ -66,7 +66,7 @@ function battleReady() {
         return true;
     }
     else {
-        alert("마물의 HP를 올바른 값으로 설정해주세요");
+        swal("Caution!", "마물의 HP를 올바른 값으로 설정해주세요");
     }
 }
 function btnOnOff() {
@@ -230,7 +230,7 @@ function atkBoxCheck(e) {
 }
 function actionReady() {
     if (charSelectCheck() == undefined) {
-        alert("기사를 선택해주세요");
+        swal("Caution!", "기사를 선택해주세요");
     }
     if (stunImmune == 0) {
         stun = false;
@@ -458,7 +458,7 @@ function playerAction(e) {
         br();
     }
     else if (charHp.value == 0) {
-        alert(`${charName.value}은(는) 사망하여 더 이상 행동할 수 없습니다`);
+        swal("Caution!", `${charName.value}은(는) 사망하여 더 이상 행동할 수 없습니다`);
     }
     else {
         logOutput(`${charName.value}은(는) 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
