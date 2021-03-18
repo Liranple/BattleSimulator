@@ -179,7 +179,7 @@ input[type="text"], input[type="number"], select {
     padding-left: 14px;
 
     width: 35%;
-    min-width: 550px;
+    min-width: 600px;
 
     background-color: black;
     color: white;
@@ -351,6 +351,10 @@ input[type="text"], input[type="number"], select {
     background-color: #fff;
     color: #495057;
 }
+.char-name:disabled {
+    background-color: #ddd;
+    color: #ed4956;
+}
 .weapon-bonus, .armor-bonus {
     height: 24px;
 }
@@ -385,7 +389,7 @@ input[type="text"], input[type="number"], select {
 }
 
 
-@media screen and (max-width: 1450px) {
+@media screen and (max-width: 1500px) {
     .char-recen-act-txt {
         display: none;
     }

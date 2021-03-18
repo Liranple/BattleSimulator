@@ -22,6 +22,8 @@ var stun = false;
 var scar = false;
 var stunCount = 3;
 var stunImmune = 0;
+var actionReturn = false;
+var monsterDefeat = 0;
 
 
 window.onload = function () {
@@ -45,6 +47,7 @@ function turnReset() {
             key["action"] = false;
             chars[i].dataset.key = JSON.stringify(key);
         }
+        stun = false;
         stunCount = 3;
         stunImmune = 10;
     }
@@ -150,7 +153,7 @@ function increment() {
             if (secs < 10) {
                 secs = "0" + secs;
             }
-            document.getElementsByClassName("turn-text")[0].innerText=`${turn}`;
+            document.getElementsByClassName("turn-text")[0].innerText=`${turn + monsterDefeat}`;
             if (subTime >= 9000 && subTime % 9000 == 0) {
                 turnReset();
                 var log = "";
@@ -163,7 +166,7 @@ function increment() {
             }
             document.getElementsByClassName("timer")[0].innerText=`${hours} : ${mins} : ${secs}`;
             increment();
-        }, 1)
+        }, 100)
     }
 }
 
@@ -315,6 +318,7 @@ function suddenAtk() {
 function stunAtk() {
     if (stun) {
         var log = "이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가";
+        actionReturn = true;
     }
     else {
         stunCount--;
@@ -323,7 +327,7 @@ function stunAtk() {
             var log = `당황한 마물에게 ${charName.value}이(가) 무력화를 시도 한다...! `;
         }
         else {
-            stun = chanceCalc(100);
+            stun = chanceCalc(5);
             var log = `${charName.value}의 무력화! 과연? `;
         }
         scar = false;
@@ -332,16 +336,20 @@ function stunAtk() {
         if (stun) {
             stunImmune = 10;
             log += "성공!";
+            logOutput(log);
+            log = "마물이 다음 턴 까지 반격을 하지 않습니다.";
         }
         else {
             if (stunCount < 0) {
-                log = "더 이상 무력화가 통하지 않는다! ";
+                log = "이번 전투에서는 더 이상 무력화를 시도할 수 없다.";
+                logOutput(log);
             }
             else {
                 log += "실패!";
+                logOutput(log);
             }
             totalDamage = 1.1 * monAtk[0];
-            log += `1.1 X ${monAtk[0]} = ${Math.round(totalDamage)} 피해를 받았다.`;
+            log = `1.1 X ${monAtk[0]} = ${Math.round(totalDamage)} 피해를 받았다.`;
             charHp.value -= Math.round(totalDamage);
         }
     }
@@ -355,25 +363,36 @@ function battleResult() {
     console.log(charHp.value);
     if (battleStart) {
         if (monHp.value == 0) {
-            log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다`;
+            log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다.`;
             logOutput(log);
             br();
             turnReset();
             running = false;
             battleStart = false;
+            monsterDefeat += 1;
+            time = 0;
             clearTimeout(timerid);
+            document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
             var startPause = document.getElementsByClassName("timer-start-pause")[0];
             startPause.classList.replace("fa-pause", "fa-play");
-            var timer = document.getElementsByClassName("timer")[0].innerText;
             document.getElementsByClassName("monster-hp-input")[0].disabled = false;
             document.getElementsByClassName("monster-hp-input")[0].value = "";
-            logOutput(`전투 대기 중... [${timer}]`);
-            btnOnOff();
+            logOutput(`전투 대기 중...`);
+            var atkBtn = document.getElementsByClassName("atk-btn");
+            for (let i = 0; i < atkBtn.length; i++) {
+                if (!running) {
+                    atkBtn[i].disabled = true;
+                }
+                else {
+                    atkBtn[i].disabled = false;
+                }
+            }
         }
         if (charHp.value <= 0) {
+            charName.disabled = true;
             charHp.value = 0;
             var log = `${charName.value} 사망`;
-            logOutput(charName.classList);
+            logOutput(log);
         }
     }
 }
@@ -396,7 +415,10 @@ function actionWork(action, attack, sudden, stun, heal) {
 function recentlyAction(status) {
     var key = JSON.parse(charData.dataset.key);
     key[status.dataset.key] += 1;
-    key["action"] = true;
+    if (actionReturn == false) {
+        key["action"] = true;
+        actionReturn == true;
+    }
     charData.dataset.key = JSON.stringify(key);
 
     var postfix = "";
@@ -415,7 +437,7 @@ function recentlyAction(status) {
 function playerAction(e) {
     actionReady()
     var key = JSON.parse(charData.dataset.key);
-    if (!key["action"]) {
+    if (!key["action"] && charHp.value > 0) {
         actionWork(e.dataset.key, function() {
             normalAtk();
             if (!stun && monHp.value > 0) {
@@ -430,9 +452,14 @@ function playerAction(e) {
         });
         recentlyAction(e);
         battleResult();
+        br();
+    }
+    else if (charHp.value == 0) {
+        alert(`${charName.value}은(는) 사망하여 더 이상 행동할 수 없습니다`);
     }
     else {
         logOutput(`${charName.value}은(는) 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
+        br();
     }
-    br();
+    battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
 }
