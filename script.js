@@ -260,6 +260,9 @@ function monsterAtk() {
         log = `마물의 공격을 받았다! `;
     }
     totalDamage -= armor;
+    if (totalDamage <= 0) {
+        totalDamage = 0;
+    }
     charHp.value -= totalDamage;
     log += `(${monAtk.join(" + ")}) - ${armor} = ${totalDamage}`;
     logOutput(log);

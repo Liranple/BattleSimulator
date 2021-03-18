@@ -179,7 +179,7 @@ input[type="text"], input[type="number"], select {
     padding-left: 14px;
 
     width: 35%;
-    min-width: 600px;
+    min-width: 650px;
 
     background-color: black;
     color: white;
@@ -389,7 +389,7 @@ input[type="text"], input[type="number"], select {
 }
 
 
-@media screen and (max-width: 1500px) {
+@media screen and (max-width: 1550px) {
     .char-recen-act-txt {
         display: none;
     }
