@@ -23,18 +23,38 @@ var scar = false;
 var stunCount = 3;
 var stunImmune = 0;
 var actionReturn = false;
+// monsterDefeat 현재는 사용 안함 추후에 처치 수 필요할 때 사용
 var monsterDefeat = 0;
 
 var sheetData
 var subData;
 var charvalue = [];
 
-
 function getby(classname, num, int) {
     var panel = document.getElementsByClassName("char-sheet");
     return panel[num].getElementsByClassName(classname)[int];
 }
 
+function dataReset() {
+    swal({
+        title: "Caution!",
+        text: "현재 페이지의 모든 내용이 초기화 됩니다",
+        icon: "warning",
+        buttons: true})
+        .then((willDelete) => {
+            if (willDelete) {
+              swal("내용이 모두 초기화 되었습니다", {
+                icon: "success",
+              })
+              .then(() => {
+                charvalue = [];
+                sheetData = JSON.stringify(charvalue);
+                localStorage.setItem("character", sheetData);
+                location.reload();
+              })
+            } else {}
+        });
+}
 function dataSave() {
     charvalue = [];
     for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
@@ -44,6 +64,7 @@ function dataSave() {
     localStorage.setItem("character", sheetData);
 }
 function dataLoad() {
+    datareset = false;
     charvalue = JSON.parse(localStorage.getItem("character"));
     if (charvalue != null) {
         for (let i = 0; i < charvalue.length; i++) {
@@ -53,6 +74,7 @@ function dataLoad() {
             loadObject(i);
         }
     }
+    turnReset();
     fps();
 }
 function fps() {
@@ -64,6 +86,7 @@ function fps() {
 
 function loadObject(sheetnum) {
     getby("char-name", sheetnum, 0).value = charvalue[sheetnum].name;
+    getby("char-name", sheetnum, 0).disabled = charvalue[sheetnum].death;
     getby("atk-box", sheetnum, 0).checked = charvalue[sheetnum].atk1;
     getby("atk-box", sheetnum, 1).checked = charvalue[sheetnum].atk2;
     getby("atk-box", sheetnum, 2).checked = charvalue[sheetnum].atk3;
@@ -72,19 +95,21 @@ function loadObject(sheetnum) {
     getby("char-hp", sheetnum, 0).value = charvalue[sheetnum].hp;
     getby("char-hp", sheetnum, 0).dataset.label = charvalue[sheetnum].hptxt;
     getby("char-recen-act-txt", sheetnum, 0).dataset.key = charvalue[sheetnum].charkey;
-    getby("char-recen-act-txt", sheetnum, 0).value = charvalue[sheetnum].chartxt;
+    getby("char-recen-act-txt", sheetnum, 0).innerHTML = charvalue[sheetnum].chartxt;
 }
 function createObject(sheetnum) {
-    return { name: getby("char-name", sheetnum, 0).value,
-    atk1: getby("atk-box", sheetnum, 0).checked,
-    atk2: getby("atk-box", sheetnum, 1).checked,
-    atk3: getby("atk-box", sheetnum, 2).checked,
-    weapon: getby("weapon-bonus", sheetnum, 0).value,
-    armor: getby("armor-bonus", sheetnum, 0).value,
-    hp: getby("char-hp", sheetnum, 0).value,
-    hptxt: getby("char-hp", sheetnum, 0).dataset.label,
-    charkey: getby("char-recen-act-txt", sheetnum, 0).dataset.key,
-    chartxt: getby("char-recen-act-txt", sheetnum, 0).value }
+    return {
+        name: getby("char-name", sheetnum, 0).value,
+        death: getby("char-name", sheetnum, 0).disabled,
+        atk1: getby("atk-box", sheetnum, 0).checked,
+        atk2: getby("atk-box", sheetnum, 1).checked,
+        atk3: getby("atk-box", sheetnum, 2).checked,
+        weapon: getby("weapon-bonus", sheetnum, 0).value,
+        armor: getby("armor-bonus", sheetnum, 0).value,
+        hp: getby("char-hp", sheetnum, 0).value,
+        hptxt: getby("char-hp", sheetnum, 0).dataset.label,
+        charkey: getby("char-recen-act-txt", sheetnum, 0).dataset.key,
+        chartxt: getby("char-recen-act-txt", sheetnum, 0).innerHTML }
 }
 window.onload = function() {
     charPanel = document.getElementsByClassName("char-panel")[0];
@@ -101,17 +126,15 @@ function br() {
     battleLogPanel.appendChild(marginDiv);
 }
 function turnReset() {
-    if (charData != undefined) {
-        var chars = document.getElementsByClassName("char-recen-act-txt");
-        for (let i = 0; i < chars.length; i++) {
-            var key = JSON.parse(chars[i].dataset.key);
-            key["action"] = false;
-            chars[i].dataset.key = JSON.stringify(key);
-        }
-        stun = false;
-        stunCount = 3;
-        stunImmune = 10;
+    var chars = document.getElementsByClassName("char-recen-act-txt");
+    for (let i = 0; i < chars.length; i++) {
+        var key = JSON.parse(chars[i].dataset.key);
+        key["action"] = false;
+        chars[i].dataset.key = JSON.stringify(key);
     }
+    stun = false;
+    stunCount = 3;
+    stunImmune = 10;
 }
 function logOutput(str, cl) {
     var battleLog = document.createElement("div");
@@ -213,7 +236,7 @@ function increment() {
             if (secs < 10) {
                 secs = "0" + secs;
             }
-            document.getElementsByClassName("turn-text")[0].innerText=`${turn + monsterDefeat}`;
+            document.getElementsByClassName("turn-text")[0].innerText=`${turn}`;
             if (subTime >= 9000 && subTime % 9000 == 0) {
                 turnReset();
                 var log = "";
@@ -324,9 +347,7 @@ function monsterAtk() {
     logOutput(log);
 }
 function normalAtk() {
-    if (stun) {
-        stunImmune -= 1;
-    }
+    if (stun) stunImmune -= 1;
     var critical = chanceCalc(30);
     var log;
     var totalDamage = charAtk.reduce((a, b) => a + b);
@@ -342,9 +363,7 @@ function normalAtk() {
     monHp.value -= totalDamage;
     log += `(${charAtk.join(" + ")}) + ${weapon} = ${totalDamage} 피해를 주었다.`;
     logOutput(log);
-    if (monHp.value <= 0) { 
-        monHp.value = 0;
-    }
+    if (monHp.value <= 0) monHp.value = 0;
     var log = `마물의 남은 HP : ${monHp.value}`;
     logOutput(log);
 }
@@ -352,17 +371,13 @@ function suddenAtk() {
     scar = chanceCalc(30);
     var totalDamage;
     if (scar || stun) {
-        if (stun) {
-            stunImmune -= 1;
-        }
+        if (stun) stunImmune -= 1;
         var log = `마물이 방심한 틈을 타 ${charName.value}의 기습 공격! `;
         totalDamage = charAtk.reduce((a, b) => a + b) * 3;
         log += `3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${totalDamage} 피해를 주었다`;
         logOutput(log);
         monHp.value -= totalDamage;
-        if (monHp.value <= 0) { 
-            monHp.value = 0;
-        }
+        if (monHp.value <= 0) monHp.value = 0;
         var log = `마물의 남은 HP : ${monHp.value}`;
         logOutput(log);
     }
@@ -473,7 +488,7 @@ function actionWork(action, attack, sudden, stun, heal) {
 function recentlyAction(status) {
     var key = JSON.parse(charData.dataset.key);
     key[status.dataset.key] += 1;
-    if (actionReturn == false) {
+    if (actionReturn == false && status.dataset.key != "heal") {
         key["action"] = true;
         actionReturn == true;
     }

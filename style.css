@@ -206,6 +206,13 @@ input[type="text"], input[type="number"], select {
 
     color: white;
 }
+.data-reset {
+    position: absolute;
+    right: 20px;
+    
+    font-size: 30px;
+    color: white;
+}
 .top-panel, .action-panel {
     display: flex;
     
@@ -221,6 +228,7 @@ input[type="text"], input[type="number"], select {
 }
 .turn-text {
     width: 25px;
+
     text-align: center;
     color: #6610f2;
 }

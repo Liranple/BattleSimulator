@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>BattleSimulator 0.20.0</title>
+    <title>BattleSimulator 0.21.0</title>
     <link href="./style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <script src="./script.js"></script>
@@ -15,7 +15,8 @@
 <body>
 
     <header class="header">
-        <h1 class="main-headline">Battle Simulator 0.20.0</h1>
+        <h1 class="main-headline">Battle Simulator 0.21.0</h1>
+        <i class="fas fa-trash-alt data-reset" onclick="dataReset()"></i>
     </header>
     <section class="section">
         <article class="article">
@@ -26,7 +27,7 @@
                     <!-- TimerPanel -->
                     <b class="timer f26 mr15">00 : 00 : 00</b>
                     <i class="fas fa-play timer-start-pause f20 mr10" onclick="battleStartPause(this)"></i>
-                    <i class="fas fa-stop timer-end f20 mr10" onclick="battleReset(), dataSave()"></i>
+                    <i class="fas fa-stop timer-end f20 mr10" onclick="battleReset()"></i>
                     <b class="turn-text f22">0</b>
                     <b class="turn-text f20 mr10">턴</b>
                     <!-- MonsterPanel -->
@@ -73,7 +74,7 @@
                         <input type="checkbox" class="atk-box p-box z14" />트리플
                     </label>
                     <select class="weapon-bonus f16 mr5">
-                        <option value="" selected>무기</option>
+                        <option value="0" selected>무기</option>
                         <option value="0">0</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
@@ -82,7 +83,7 @@
                         <option value="50">50</option>
                     </select>
                     <select class="armor-bonus f16 mr10">
-                        <option value="" selected>방어</option>
+                        <option value="0" selected>방어</option>
                         <option value="0">0</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
