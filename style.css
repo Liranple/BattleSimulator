@@ -218,7 +218,7 @@ input[type="text"], input[type="number"], select {
     
     height: 35px;
 }
-.top-panel > b, i, input, label, .action-panel > i, button{
+.top-panel > b, i, select, label, .action-panel > i, button{
     margin-top: auto;
     margin-bottom: auto;
 }
@@ -232,18 +232,18 @@ input[type="text"], input[type="number"], select {
     text-align: center;
     color: #6610f2;
 }
-.monster-hp-input {
-    padding: 7px 7px;
+.monster-hp {
+    padding-left: 2px;
     border: 2px solid #bdc3c0;
 
     height: 30px;
-    width: 130px;
+    width: 100px;
 
     font-weight: bold;
     background-color: #fff;
     color: #495057;
 }
-.monster-hp-input:disabled {
+.monster-hp:disabled {
     background-color: #ddd;
     color: #495057;
 }

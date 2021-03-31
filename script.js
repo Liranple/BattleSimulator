@@ -30,11 +30,20 @@ var sheetData
 var subData;
 var charvalue = [];
 
-function getby(classname, num, int) {
-    var panel = document.getElementsByClassName("char-sheet");
-    return panel[num].getElementsByClassName(classname)[int];
-}
+var monsterItem = [];
+var dropTable = [];
+var item20 = [];
+var item40 = [];
+var item100 = [];
+var item200 = [];
+var item400 = [];
 
+function fps() {
+    setTimeout(function() {
+        dataSave();
+        fps();
+    }, 100)
+}
 function dataReset() {
     swal({
         title: "Caution!",
@@ -58,7 +67,7 @@ function dataReset() {
 function dataSave() {
     charvalue = [];
     for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
-        charvalue.push(createObject(i));
+        charvalue.push(objectSave(i));
     }
     sheetData = JSON.stringify(charvalue);
     localStorage.setItem("character", sheetData);
@@ -71,33 +80,13 @@ function dataLoad() {
             if (i != 0) {
                 addCharSheet()
             }
-            loadObject(i);
+            objectLoad(i);
         }
     }
     turnReset();
     fps();
 }
-function fps() {
-    setTimeout(function() {
-        dataSave();
-        fps();
-    }, 100)
-}
-
-function loadObject(sheetnum) {
-    getby("char-name", sheetnum, 0).value = charvalue[sheetnum].name;
-    getby("char-name", sheetnum, 0).disabled = charvalue[sheetnum].death;
-    getby("atk-box", sheetnum, 0).checked = charvalue[sheetnum].atk1;
-    getby("atk-box", sheetnum, 1).checked = charvalue[sheetnum].atk2;
-    getby("atk-box", sheetnum, 2).checked = charvalue[sheetnum].atk3;
-    getby("weapon-bonus", sheetnum, 0).value = charvalue[sheetnum].weapon;
-    getby("armor-bonus", sheetnum, 0).value = charvalue[sheetnum].armor;
-    getby("char-hp", sheetnum, 0).value = charvalue[sheetnum].hp;
-    getby("char-hp", sheetnum, 0).dataset.label = charvalue[sheetnum].hptxt;
-    getby("char-recen-act-txt", sheetnum, 0).dataset.key = charvalue[sheetnum].charkey;
-    getby("char-recen-act-txt", sheetnum, 0).innerHTML = charvalue[sheetnum].chartxt;
-}
-function createObject(sheetnum) {
+function objectSave(sheetnum) {
     return {
         name: getby("char-name", sheetnum, 0).value,
         death: getby("char-name", sheetnum, 0).disabled,
@@ -111,6 +100,19 @@ function createObject(sheetnum) {
         charkey: getby("char-recen-act-txt", sheetnum, 0).dataset.key,
         chartxt: getby("char-recen-act-txt", sheetnum, 0).innerHTML }
 }
+function objectLoad(sheetnum) {
+    getby("char-name", sheetnum, 0).value = charvalue[sheetnum].name;
+    getby("char-name", sheetnum, 0).disabled = charvalue[sheetnum].death;
+    getby("atk-box", sheetnum, 0).checked = charvalue[sheetnum].atk1;
+    getby("atk-box", sheetnum, 1).checked = charvalue[sheetnum].atk2;
+    getby("atk-box", sheetnum, 2).checked = charvalue[sheetnum].atk3;
+    getby("weapon-bonus", sheetnum, 0).value = charvalue[sheetnum].weapon;
+    getby("armor-bonus", sheetnum, 0).value = charvalue[sheetnum].armor;
+    getby("char-hp", sheetnum, 0).value = charvalue[sheetnum].hp;
+    getby("char-hp", sheetnum, 0).dataset.label = charvalue[sheetnum].hptxt;
+    getby("char-recen-act-txt", sheetnum, 0).dataset.key = charvalue[sheetnum].charkey;
+    getby("char-recen-act-txt", sheetnum, 0).innerHTML = charvalue[sheetnum].chartxt;
+}
 window.onload = function() {
     charPanel = document.getElementsByClassName("char-panel")[0];
     charSheetTxt = document.getElementsByClassName("char-sheet")[0].innerHTML;
@@ -120,6 +122,10 @@ window.onload = function() {
     dataLoad();
 }
 
+function getby(classname, num, int) {
+    var panel = document.getElementsByClassName("char-sheet");
+    return panel[num].getElementsByClassName(classname)[int];
+}
 function br() {
     var marginDiv = document.createElement("div");
     marginDiv.innerHTML = "<br>";
@@ -143,20 +149,10 @@ function logOutput(str, cl) {
     battleLogPanel.appendChild(battleLog);
 }
 
-
-function battleReady() {
-    monHp = document.getElementsByClassName("monster-hp-input")[0].value;
-    if (monHp > 0) {
-        return true;
-    }
-    else {
-        swal("Caution!", "마물의 HP를 올바른 값으로 설정해주세요");
-    }
-}
 function btnOnOff() {
     var healBtn = document.getElementsByClassName("heal-btn");
     for (let i = 0; i < healBtn.length; i++) {
-        if (document.getElementsByClassName("monster-hp-input")[0].disabled) {
+        if (document.getElementsByClassName("monster-hp")[0].disabled) {
             healBtn[i].disabled = true;
         }
         else {
@@ -174,8 +170,7 @@ function btnOnOff() {
     }
 }
 function battleStartPause(e) {
-    var isReady = battleReady();
-    if (!running && isReady) {
+    if (!running) {
         running = true;
         if (!battleStart) {
             battleStart = true;
@@ -187,7 +182,7 @@ function battleStartPause(e) {
             logOutput("전투 재개");
             br();
         }
-        document.getElementsByClassName("monster-hp-input")[0].disabled = true;
+        document.getElementsByClassName("monster-hp")[0].disabled = true;
         increment();
         e.classList.replace("fa-play", "fa-pause");
     }
@@ -210,8 +205,7 @@ function battleReset() {
     document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
     document.getElementsByClassName("timer-start-pause")[0].classList.replace("fa-pause", "fa-play");
     document.getElementsByClassName("turn-text")[0].innerText = "0";
-    document.getElementsByClassName("monster-hp-input")[0].disabled = false;
-    document.getElementsByClassName("monster-hp-input")[0].value = "";
+    document.getElementsByClassName("monster-hp")[0].disabled = false;
     btnOnOff();
     battleLogPanel.innerHTML = " ";
 }
@@ -309,6 +303,103 @@ function atkBoxCheck(e) {
     }
     return damage;
 }
+function createDropTable() {
+    dropTable = [
+        item20 = [
+            ["마물의 잔해 1개", 80, 20],
+            ["마물의 잔해 2개", 60, 20],
+            ["헤진 붕대 (10)", 50, 10],
+            ["고급 붕대 (100)", 40, 10],
+            ["30 아르", 30, 10],
+            ["리브레 포션 (30)", 20, 10],
+            ["대용량 리브레 포션 (50)", 10, 10],
+            ["보호부적 (0)", 5, 5],
+            ["빛바랜 루비", 0, 5]
+        ],
+        item40 = [
+            ["마물의 잔해 1개", 80, 20],
+            ["마물의 잔해 2개", 65, 15],
+            ["헤진 붕대 (10)", 55, 10],
+            ["고급 붕대 (100)", 45, 10],
+            ["50 아르", 35, 10],
+            ["리브레 포션 (30)", 25, 10],
+            ["대용량 리브레 포션 (50)", 15, 10],
+            ["보호부적 (0)", 10, 5],
+            ["찢어진 일기장 1", 5, 5],
+            ["찢어진 일기장 2", 2, 3],
+            ["빛바랜 사파이어", 0, 2]
+        ],
+        item100 = [
+            ["마물의 잔해 1개", 80, 20],
+            ["마물의 잔해 2개", 70, 10],
+            ["굳게 잠긴 상자", 60, 10],
+            ["고급 붕대 (100)", 50, 10],
+            ["100 아르", 40, 10],
+            ["리브레 포션 (30)", 30, 10],
+            ["대용량 리브레 포션 (50)", 20, 10],
+            ["보호부적 (0)", 15, 5],
+            ["업화의 무기(10)", 10, 5],
+            ["찢어진 사진첩 1", 5, 5],
+            ["찢어진 사진첩 2", 2, 3],
+            ["빛바랜 에메랄드", 0, 2]
+        ],
+        item200 = [
+            ["마물의 잔해 1개", 85, 15],
+            ["마물의 잔해 2개", 75, 10],
+            ["굳게 잠긴 상자", 65, 10],
+            ["고급 붕대 (100)", 55, 10],
+            ["누군가의 주머니", 45, 10],
+            ["500 아르", 35, 10],
+            ["리브레 포션 (30)", 25, 10],
+            ["대용량 리브레 포션 (50)", 15, 10],
+            ["보호부적 (0)", 10, 5],
+            ["신념의 무기 (20)", 5, 5],
+            ["깨어난 업화의 무기 (20)", 3, 2],
+            ["빛바랜 자수정", 1, 2],
+            ["빛바랜 다이아몬드", 0, 1]
+        ],
+        item400 = [
+            ["마물의 잔해 1개", 80, 20],
+            ["마물의 잔해 2개", 65, 15],
+            ["굳게 잠긴 상자", 55, 10],
+            ["고급 붕대 (100)", 45, 10],
+            ["누군가의 주머니", 35, 10],
+            ["1000 아르", 25, 10],
+            ["대용량 리브레 포션 (50)", 15, 10],
+            ["보호부적 (0)", 10, 5],
+            ["업화의 무기 (10)", 7, 3]
+            ["신념의 무기 (20)", 5, 2],
+            ["깨어난 신념의 무기 (30)", 3, 2],
+            ["빛바랜 오팔", 1, 2],
+            ["빛바랜 다이아몬드", 0, 1]
+        ]
+    ]
+}
+function monsterItemDrop() {
+    var monHpList = document.getElementsByClassName("monster-hp")[0];
+    for (let i = 0; i < dropTable.length; i++) {
+        if (monHpList.selectedIndex == i) {
+            monsterItem = dropTable[i];
+            break;
+        }
+        else monsterItem = [];
+    }
+
+    if (monsterItem.length != 0) {
+        var chance = Math.ceil(Math.random() * 100);
+        for (let i = 0; i < monsterItem.length; i++) {
+            if (chance > monsterItem[i][1]) {
+                if (monsterItem[i][2] < 5) {
+                    logOutput(`정화 성공! ... 아니, 이것은!! ${monsterItem[i][0]}을/를 얻었다!`);
+                }
+                else {
+                    logOutput(`정화 성공! ${monsterItem[i][0]}을/를 얻었다`);
+                }
+                break;
+            }
+        }
+    }
+}
 function actionReady() {
     if (charSelectCheck() == undefined) swal("Caution!", "기사를 선택해주세요");
     if (stunImmune == 0) stun = false;
@@ -323,7 +414,8 @@ function actionReady() {
     armor = armor.options[armor.selectedIndex].value;
     if (armor == "") armor = 0;
     monAtk = atkBoxCheck("m-box");
-    monHp = document.getElementsByClassName("monster-hp-input")[0];
+    monHp = document.getElementsByClassName("monster-hp")[0];
+    monHp = monHp.options[monHp.selectedIndex];
 }
 
 function monsterAtk() {
@@ -382,7 +474,7 @@ function suddenAtk() {
         logOutput(log);
     }
     else { 
-        var log = `${charName.value}은(는) 파고 들었지만 마물에게 간파 당했다! `;
+        var log = `${charName.value}은/는/ 파고 들었지만 마물에게 간파 당했다! `;
         totalDamage = monAtk.reduce((a, b) => a + b) * 3;
         log += `3.0 X (${monAtk.join(" + ")}) = ${totalDamage} 역습으로 큰 피해를 받았다`;
         charHp.value -= totalDamage;
@@ -439,6 +531,7 @@ function battleResult() {
             log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다.`;
             logOutput(log);
             br();
+            monsterItemDrop();
             turnReset();
             running = false;
             battleStart = false;
@@ -448,8 +541,7 @@ function battleResult() {
             document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
             var startPause = document.getElementsByClassName("timer-start-pause")[0];
             startPause.classList.replace("fa-pause", "fa-play");
-            document.getElementsByClassName("monster-hp-input")[0].disabled = false;
-            document.getElementsByClassName("monster-hp-input")[0].value = "";
+            document.getElementsByClassName("monster-hp")[0].disabled = false;
             logOutput(`전투 대기 중...`);
             var atkBtn = document.getElementsByClassName("atk-btn");
             for (let i = 0; i < atkBtn.length; i++) {
@@ -528,10 +620,10 @@ function playerAction(e) {
         br();
     }
     else if (charHp.value == 0) {
-        swal("Caution!", `${charName.value}은(는) 사망하여 더 이상 행동할 수 없습니다`);
+        swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
     }
     else {
-        logOutput(`${charName.value}은(는) 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
+        logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
         br();
     }
     battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
