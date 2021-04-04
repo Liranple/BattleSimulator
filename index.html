@@ -13,9 +13,9 @@
 </head>
 
 <body>
-
     <header class="header">
         <h1 class="main-headline">Battle Simulator 0.21.0</h1>
+        <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"></i>
         <i class="fas fa-trash-alt data-reset" onclick="dataReset()"></i>
     </header>
     <section class="section">
@@ -108,6 +108,7 @@
                     <div class="char-recen-act-txt f14 inline-block" data-key='{"attack": 0, "sudden": 0, "stun": 0, "heal": 0, "action": false}'></div>
                 </div>
             </div>
+            <div id="snackbar"></div>
         </article>
         <!-- BattleLogPanel -->
         <aside class="aside">

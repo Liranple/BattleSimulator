@@ -38,6 +38,69 @@ var item100 = [];
 var item200 = [];
 var item400 = [];
 
+var inputs; // input의 모든 DOM
+var snackbar; // 저장 중~ 저장 완료 출력 박스 DOM
+
+// 이하 변수들은 전송할 데이터를 담습니다 (기존 createObject 내용)
+var inputName;
+var inputHp;
+var inputAtk1;
+var inputAtk2;
+var inputWeapon;
+var inputArmor;
+var inputCharData; 
+
+googleDocCallback = function () { return true; };
+
+
+function dataRead() {
+    inputName = $('.char-name')[0];
+    inputHp = $('.char-hp')[0];
+    inputAtk1 = $('.p-box')[1];
+    inputAtk2 = $('.p-box')[2];
+    inputWeapon = $('.weapon-bonus')[0];
+    inputArmor = $('.armor-bonus')[0];
+    inputCharData = $('.char-recen-act-txt')[0];
+}
+function isLoading(status){
+    if(status){
+      $('html, body').addClass('wait');
+    } else {
+      $('html, body').removeClass('wait');
+    }
+}
+function dataUpload() {
+  
+    // 입력중..
+    isLoading(true);
+    dataRead();
+    
+    $.ajax({
+        type: "GET",
+        url: "https://script.google.com/macros/s/AKfycby_FfSW51nNGSopgaF2UzbAUMvBvQ473TWV9S8yog5zqlFHdnAqVjqQ5LG2Lhr36vfevQ/exec",
+        data: {
+            "이름": inputName.value,
+            "체력": inputHp.value,
+            "더블": inputAtk1.checked,
+            "트리플": inputAtk2.checked,
+            "무기": inputWeapon.value,
+            "갑옷": inputArmor.value,
+            "데이터": inputCharData.dataset.key
+        },
+        success: function (callback) {
+            isLoading(false);
+  
+            snackbar.html('성공적으로 저장했습니다').addClass('show');
+            setTimeout(function () {
+            snackbar.removeClass('show');
+        }, 3000);
+      },
+        error: function (request, status, error) {
+            isLoading(false);
+      }
+    });
+}
+
 function fps() {
     setTimeout(function() {
         dataSave();
@@ -119,7 +182,8 @@ window.onload = function() {
     
     battleLogPanel = document.getElementsByClassName("battle-log-panel")[0];
     startBtn = document.getElementsByClassName("fa-play")[0];
-    dataLoad();
+    snackbar = $('#snackbar');
+    // dataLoad();
 }
 
 function getby(classname, num, int) {
