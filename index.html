@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>BattleSimulator 0.21.0</title>
+    <title>BattleSimulator 0.22.0</title>
     <link href="./style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <script src="./script.js"></script>
@@ -14,14 +14,18 @@
 
 <body>
     <header class="header">
-        <h1 class="main-headline">Battle Simulator 0.21.0</h1>
-        <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"></i>
-        <i class="fas fa-trash-alt data-reset" onclick="dataReset()"></i>
+        <h1 class="main-headline">Battle Simulator 0.22.0</h1>
+        <form id="upload" method="post" action="dataUpload.php">
+            <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"></i>
+        </form>
+        <form id="download" method="post" action="dataDownload.php">
+            <i class="fas fa-cloud-download-alt data-download" onclick="dataDownload()"></i>
+        </form>
     </header>
     <section class="section">
         <article class="article">
             <!-- ControlPanel -->
-            <div class="bs pb10 pl5">
+            <div class="bs pl5">
                 <!-- TimerPanel -->
                 <div class="top-panel mb10">
                     <!-- TimerPanel -->
@@ -33,19 +37,19 @@
                     <!-- MonsterPanel -->
                     <b class="f20 mr5">마물HP</b>
                     <select class="monster-hp f20 mr5">
-                        <option value="20">20</option>
-                        <option value="40">40</option>
-                        <option value="100">100</option>
-                        <option value="200">200</option>
-                        <option value="400">400</option>
-                        <option value="500">500</option>
-                        <option value="800">800</option>
-                        <option value="1000">1000</option>
-                        <option value="2000">2000</option>
-                        <option value="3000">3000</option>
-                        <option value="4000">4000</option>
-                        <option value="5000">5000</option>
-                        <option value="10000">10000</option>
+                        <option class="execution" value="20">20</option>
+                        <option class="execution" value="40">40</option>
+                        <option class="execution" value="100">100</option>
+                        <option class="execution" value="200">200</option>
+                        <option class="execution" value="400">400</option>
+                        <option class="raid" value="500">500</option>
+                        <option class="raid" value="800">800</option>
+                        <option class="raid" value="1000">1000</option>
+                        <option class="raid" value="2000">2000</option>
+                        <option class="raid" value="3000">3000</option>
+                        <option class="raid" value="4000">4000</option>
+                        <option class="raid" value="5000">5000</option>
+                        <option class="raid" value="10000">10000</option>
                     </select>
                     <label class="f20 b mr5">
                         <input type="checkbox" class="atk-box m-box z15" checked disabled />기본
@@ -69,12 +73,19 @@
                     <button type="button" data-key="heal" data-value="50" class="heal-btn f16 mr5 b" onclick="playerAction(this)">50회복</button>
                     <button type="button" data-key="heal" data-value="100" class="heal-btn f16 b" onclick="playerAction(this)">100회복</button>
                 </div>
+                <div class="group-panel mt10">
+                    <button class="all" onclick="allView()">전체</button>
+                    <button class="rest ml5" ondrop="dropRest(event)" ondragover="allowDrop(event)" onclick="restView()">휴식</button>
+                    <button class="party-1 ml5" ondrop="dropParty1(event)" ondragover="allowDrop(event)" onclick="party1View()">파티 1</button>
+                    <button class="party-2 ml5" ondrop="dropParty2(event)" ondragover="allowDrop(event)" onclick="party2View()">파티 2</button>
+                    <button class="party-3 ml5" ondrop="dropParty3(event)" ondragover="allowDrop(event)" onclick="party3View()">파티 3</button>
+                </div>
             </div>
             <!-- CharacterPanel -->
-            <div class="char-panel mt10">
-                <div class="char-sheet inline-block">
+            <div class="char-panel mt5">
+                <div class="char-sheet rest" draggable="true">
                     <label>
-                        <input type="radio" name="switch" class="input_on-off" />
+                        <input type="checkbox" name="switch" class="input_on-off" />
                         <div class="switch_on-off"></div>
                     </label>
                     <input type="text" class="char-name f16 ml5 mr5" placeholder="캐릭터 이름" tabindex="1" />

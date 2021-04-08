@@ -57,6 +57,9 @@ input[type="text"], input[type="number"], select {
     padding-left: 5px;
 }
 
+.mt5 {
+    margin-top: 5px;
+}
 .mt10 {
     margin-top: 10px;
 }
@@ -144,6 +147,9 @@ input[type="text"], input[type="number"], select {
 .b {
     font-weight: bold;
 }
+.hidden {
+    display: none !important;
+}
 
 /* normal class */
 
@@ -208,16 +214,16 @@ input[type="text"], input[type="number"], select {
 }
 .data-upload {
     position: absolute;
-    right: 60px;
+    right: 75px;
     
     font-size: 32px;
     color: white;
 }
-.data-reset {
+.data-download {
     position: absolute;
     right: 20px;
     
-    font-size: 30px;
+    font-size: 32px;
     color: white;
 }
 .top-panel, .action-panel {
@@ -299,6 +305,46 @@ input[type="text"], input[type="number"], select {
 .heal-btn:enabled:active {
     background-color: #105206;
 }
+.group-panel {
+    display: flex;
+}
+.group-panel>button {
+    border-radius: 10px 10px 0px 0px;
+    height: 30px;
+    width: 90px;
+    padding: 0px 18px 0px 18px;
+
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+.group-panel>.all {
+    border: 2px solid #505050;
+    border-bottom: 0px;
+    background-color: #bbc1c9;
+}
+.group-panel>.rest {
+    border: 2px solid #5c7a5f;
+    border-bottom: 0px;
+    background-color: #8fda86;
+}
+.group-panel>.party-1 {
+    border: 2px solid #506b88;
+    border-bottom: 0px;
+    background-color: #79a9e9;
+}
+.group-panel>.party-2 {
+    border: 2px solid #585088;
+    border-bottom: 0px;
+    background-color: #8e79e9;
+}
+.group-panel>.party-3 {
+    border: 2px solid #88505c;
+    border-bottom: 0px;
+    background-color: #e9799e;
+}
+
 .char-panel, .battle-log-panel {
     flex: 1;
 
@@ -335,7 +381,23 @@ input[type="text"], input[type="number"], select {
     display: flex;
     align-items: center;
 
-    height: 40px;
+    height: 42px;
+    border: 2px solid #bbc1c9;
+    border-radius: 7px;
+    padding-left: 7px;
+    margin-top: 4px;
+}
+.rest {
+    border-color: #8fda86;
+}
+.party1 {
+    border-color: #79a9e9;
+}
+.party2 {
+    border-color: #8e79e9;
+}
+.party3 {
+    border-color: #e9799e;
 }
 .input_on-off {
     display: none;
@@ -404,85 +466,8 @@ input[type="text"], input[type="number"], select {
 }
 
 
-@media screen and (max-width: 1550px) {
+@media screen and (max-width: 1560px) {
     .char-recen-act-txt {
         display: none;
     }
-}
-
-html.wait *,
-html.wait,
-body.wait *,
-body.wait {
-  cursor: progress !important;
-}
-
-#snackbar {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-  font-size: 17px;
-}
-
-#snackbar.show {
-  visibility: visible;
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
-}
-
-@keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
-}
-
-@-webkit-keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
-}
-
-@keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
 }

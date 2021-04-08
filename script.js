@@ -29,6 +29,7 @@ var monsterDefeat = 0;
 var sheetData
 var subData;
 var charvalue = [];
+var nowParty;
 
 var monsterItem = [];
 var dropTable = [];
@@ -37,96 +38,90 @@ var item40 = [];
 var item100 = [];
 var item200 = [];
 var item400 = [];
-
-var inputs; // input의 모든 DOM
-var snackbar; // 저장 중~ 저장 완료 출력 박스 DOM
-
-// 이하 변수들은 전송할 데이터를 담습니다 (기존 createObject 내용)
-var inputName;
-var inputHp;
-var inputAtk1;
-var inputAtk2;
-var inputWeapon;
-var inputArmor;
-var inputCharData; 
-
-googleDocCallback = function () { return true; };
+var itemOther = [];
 
 
-function dataRead() {
-    inputName = $('.char-name')[0];
-    inputHp = $('.char-hp')[0];
-    inputAtk1 = $('.p-box')[1];
-    inputAtk2 = $('.p-box')[2];
-    inputWeapon = $('.weapon-bonus')[0];
-    inputArmor = $('.armor-bonus')[0];
-    inputCharData = $('.char-recen-act-txt')[0];
+function allowDrop(ev) {
+    ev.preventDefault();
 }
-function isLoading(status){
-    if(status){
-      $('html, body').addClass('wait');
-    } else {
-      $('html, body').removeClass('wait');
+function dropRest(ev) {
+    ev.preventDefault();
+    for (let i = 0; i < selectChar().length; i++) {
+        selectChar()[i].className = "char-sheet rest";
     }
 }
-function dataUpload() {
-  
-    // 입력중..
-    isLoading(true);
-    dataRead();
-    
-    $.ajax({
-        type: "GET",
-        url: "https://script.google.com/macros/s/AKfycby_FfSW51nNGSopgaF2UzbAUMvBvQ473TWV9S8yog5zqlFHdnAqVjqQ5LG2Lhr36vfevQ/exec",
-        data: {
-            "이름": inputName.value,
-            "체력": inputHp.value,
-            "더블": inputAtk1.checked,
-            "트리플": inputAtk2.checked,
-            "무기": inputWeapon.value,
-            "갑옷": inputArmor.value,
-            "데이터": inputCharData.dataset.key
-        },
-        success: function (callback) {
-            isLoading(false);
-  
-            snackbar.html('성공적으로 저장했습니다').addClass('show');
-            setTimeout(function () {
-            snackbar.removeClass('show');
-        }, 3000);
-      },
-        error: function (request, status, error) {
-            isLoading(false);
-      }
-    });
+function dropParty1(ev) {
+    ev.preventDefault();
+    for (let i = 0; i < selectChar().length; i++) {
+        selectChar()[i].className = "char-sheet party1";
+    }
+}
+function dropParty2(ev) {
+    ev.preventDefault();
+    for (let i = 0; i < selectChar().length; i++) {
+        selectChar()[i].className = "char-sheet party2";
+    }
+}
+function dropParty3(ev) {
+    ev.preventDefault();
+    for (let i = 0; i < selectChar().length; i++) {
+        selectChar()[i].className = "char-sheet party3";
+    }
+}
+function allView() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        $(".char-sheet")[i].classList.remove("hidden");
+        $(".input_on-off")[i].checked = false;
+    }
+}
+function restView() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        if ($(".char-sheet")[i].classList.contains("rest")) {
+            $(".char-sheet")[i].classList.remove("hidden");
+        }
+        else {
+            $(".char-sheet")[i].classList.add("hidden");
+        }
+        $(".input_on-off")[i].checked = false;
+    }
+}
+function party1View() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        if ($(".char-sheet")[i].classList.contains("party1")) {
+            $(".char-sheet")[i].classList.remove("hidden");
+        }
+        else {
+            $(".char-sheet")[i].classList.add("hidden");
+        }
+        $(".input_on-off")[i].checked = false;
+    }
+    nowParty = "party1";
+}
+function party2View() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        if ($(".char-sheet")[i].classList.contains("party2")) {
+            $(".char-sheet")[i].classList.remove("hidden");
+        }
+        else {
+            $(".char-sheet")[i].classList.add("hidden");
+        }
+        $(".input_on-off")[i].checked = false;
+    }
+    nowParty = "party2";
+}
+function party3View() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        if ($(".char-sheet")[i].classList.contains("party3")) {
+            $(".char-sheet")[i].classList.remove("hidden");
+        }
+        else {
+            $(".char-sheet")[i].classList.add("hidden");
+        }
+        $(".input_on-off")[i].checked = false;
+    }
+    nowParty = "party3";
 }
 
-function fps() {
-    setTimeout(function() {
-        dataSave();
-        fps();
-    }, 100)
-}
-function dataReset() {
-    swal({
-        title: "Caution!",
-        text: "현재 페이지의 모든 내용이 초기화 됩니다",
-        icon: "warning",
-        buttons: true})
-        .then((willDelete) => {
-            if (willDelete) {
-              swal("내용이 모두 초기화 되었습니다", {
-                icon: "success",
-              })
-              .then(() => {
-                charvalue = [];
-                sheetData = JSON.stringify(charvalue);
-                localStorage.setItem("character", sheetData);
-                location.reload();
-              })
-            } else {}
-        });
-}
 function dataSave() {
     charvalue = [];
     for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
@@ -183,6 +178,8 @@ window.onload = function() {
     battleLogPanel = document.getElementsByClassName("battle-log-panel")[0];
     startBtn = document.getElementsByClassName("fa-play")[0];
     snackbar = $('#snackbar');
+    charSheet = $(".char-sheet")[0].cloneNode();
+    createDropTable();
     // dataLoad();
 }
 
@@ -196,7 +193,7 @@ function br() {
     battleLogPanel.appendChild(marginDiv);
 }
 function turnReset() {
-    var chars = document.getElementsByClassName("char-recen-act-txt");
+    var chars = $(".char-recen-act-txt");
     for (let i = 0; i < chars.length; i++) {
         var key = JSON.parse(chars[i].dataset.key);
         key["action"] = false;
@@ -311,24 +308,26 @@ function increment() {
     }
 }
 
-
-function charSelectCheck() {
-    var checkbox = document.getElementsByClassName("input_on-off");
+function selectChar() { 
+    var selectChar = [];
+    var checkbox = $(".input_on-off");
     for (let i = 0; i < checkbox.length; i++) {
         if (checkbox[i].checked == true) {
-            return checkbox[i].parentNode.parentNode;
+            selectChar.push(checkbox[i].parentNode.parentNode);
         }
     }
+    return selectChar;
 }
 function addCharSheet() {
-    charSheet = document.createElement("div");
-    charSheet.innerHTML = charSheetTxt;
-    charSheet.classList = "char-sheet inline-block";
-    charPanel.appendChild(charSheet);
+    var $div = $(charSheet.outerHTML);
+    $div[0].innerHTML = charSheetTxt;
+    charPanel.append($div[0]);
 }
 function delCharSheet() {
-    if (document.getElementsByClassName("char-sheet").length > 1) {
-        charPanel.removeChild(charSelectCheck());
+    if ($(".char-sheet").length > selectChar().length) {
+        for (let i = selectChar().length-1; i >= 0; i--) {
+           selectChar()[i].remove();
+        }
     }
 }
 
@@ -341,9 +340,9 @@ function chanceCalc(persent) {
     }
     return result;
 }
-function atkBoxCheck(e) {
+function atkBoxCheck(e, i = 0) {
     if (e == "p-box") {
-        var atkBox = charSelectCheck().getElementsByClassName(e);
+        var atkBox = selectChar()[i].getElementsByClassName(e);
     }
     if (e == "m-box") {
         var atkBox = document.getElementsByClassName(e);
@@ -436,49 +435,56 @@ function createDropTable() {
             ["깨어난 신념의 무기 (30)", 3, 2],
             ["빛바랜 오팔", 1, 2],
             ["빛바랜 다이아몬드", 0, 1]
+        ],
+        itemOther = [
+            ["타락한 수호자의 심장", 95, 5]
         ]
     ]
 }
 function monsterItemDrop() {
-    var monHpList = document.getElementsByClassName("monster-hp")[0];
+    var monHpList = $(".monster-hp")[0];
     for (let i = 0; i < dropTable.length; i++) {
         if (monHpList.selectedIndex == i) {
             monsterItem = dropTable[i];
             break;
         }
-        else monsterItem = [];
+        else monsterItem = dropTable[5];
     }
 
-    if (monsterItem.length != 0) {
-        var chance = Math.ceil(Math.random() * 100);
-        for (let i = 0; i < monsterItem.length; i++) {
-            if (chance > monsterItem[i][1]) {
-                if (monsterItem[i][2] < 5) {
-                    logOutput(`정화 성공! ... 아니, 이것은!! ${monsterItem[i][0]}을/를 얻었다!`);
+    for (let i = 0; i < $(`.${nowParty}`).length; i++) {
+        if (monsterItem.length != 0) {
+            var chance = Math.ceil(Math.random() * 100);
+            for (let i = 0; i < monsterItem.length; i++) {
+                if (chance > monsterItem[i][1]) {
+                    if (monsterItem[i][2] <= 5) {
+                        logOutput(`정화 성공! ... 아니, 이것은!! ${monsterItem[i][0]} 을/를 얻었다!`);
+                    }
+                    else {
+                        if (monsterItem.length > 1) {
+                            logOutput(`정화 성공! ${monsterItem[i][0]} 을/를 얻었다`);
+                        }
+                    }
+                    br();
+                    break;
                 }
-                else {
-                    logOutput(`정화 성공! ${monsterItem[i][0]}을/를 얻었다`);
-                }
-                break;
             }
         }
     }
 }
-function actionReady() {
-    if (charSelectCheck() == undefined) swal("Caution!", "기사를 선택해주세요");
+function actionReady(i) {
     if (stunImmune == 0) stun = false;
-    charName = charSelectCheck().getElementsByClassName("char-name")[0];
-    charAtk = atkBoxCheck("p-box");
-    charHp = charSelectCheck().getElementsByClassName("char-hp")[0];
-    charData = charSelectCheck().getElementsByClassName("char-recen-act-txt")[0];
-    weapon = charSelectCheck().getElementsByClassName("weapon-bonus")[0];
+    charName = selectChar()[i].getElementsByClassName("char-name")[0];
+    charAtk = atkBoxCheck("p-box", i);
+    charHp = selectChar()[i].getElementsByClassName("char-hp")[0];
+    charData = selectChar()[i].getElementsByClassName("char-recen-act-txt")[0];
+    weapon = selectChar()[i].getElementsByClassName("weapon-bonus")[0];
     weapon = weapon.options[weapon.selectedIndex].value;
     if (weapon == "") waepon = 0;
-    armor = charSelectCheck().getElementsByClassName("armor-bonus")[0];
+    armor = selectChar()[i].getElementsByClassName("armor-bonus")[0];
     armor = armor.options[armor.selectedIndex].value;
     if (armor == "") armor = 0;
     monAtk = atkBoxCheck("m-box");
-    monHp = document.getElementsByClassName("monster-hp")[0];
+    monHp = $(".monster-hp")[0];
     monHp = monHp.options[monHp.selectedIndex];
 }
 
@@ -532,6 +538,7 @@ function suddenAtk() {
         totalDamage = charAtk.reduce((a, b) => a + b) * 3;
         log += `3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${totalDamage} 피해를 주었다`;
         logOutput(log);
+        logOutput("마물이 당황한 것 같다!");
         monHp.value -= totalDamage;
         if (monHp.value <= 0) monHp.value = 0;
         var log = `마물의 남은 HP : ${monHp.value}`;
@@ -553,7 +560,7 @@ function stunAtk() {
     else {
         stunCount--;
         if (scar) {
-            stun = chanceCalc(30);
+            stun = chanceCalc(50);
             var log = `당황한 마물에게 ${charName.value}이(가) 무력화를 시도 한다...! `;
         }
         else {
@@ -592,6 +599,7 @@ function battleResult() {
     charHp.dataset.label = `${charHp.value} / 500`;
     if (battleStart) {
         if (monHp.value == 0) {
+            monHp.value = monHp.innerHTML;
             log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다.`;
             logOutput(log);
             br();
@@ -623,18 +631,19 @@ function battleResult() {
             var log = `${charName.value} 사망`;
             logOutput(log);
         }
+        br();
     }
 }
 function actionWork(action, attack, sudden, stun, heal) {
     switch (action) {
         case "attack":
-            attack();
+            if (running) attack();
             break;
         case "sudden":
-            sudden();
+            if (running) sudden();
             break;
         case "stun":
-            stun();
+            if (running) stun();
             break;
         case "heal":
             heal();
@@ -643,10 +652,12 @@ function actionWork(action, attack, sudden, stun, heal) {
 }
 function recentlyAction(status) {
     var key = JSON.parse(charData.dataset.key);
-    key[status.dataset.key] += 1;
-    if (actionReturn == false && status.dataset.key != "heal") {
-        key["action"] = true;
-        actionReturn == true;
+    if (running || status.dataset.key == "heal") {
+        key[status.dataset.key] += 1;
+        if (actionReturn == false && status.dataset.key != "heal") {
+            key["action"] = true;
+            actionReturn == true;
+        }
     }
     charData.dataset.key = JSON.stringify(key);
 
@@ -660,35 +671,40 @@ function recentlyAction(status) {
     }, function() {
         postfix = `HP ${status.dataset.value}회복`;
         logOutput(`${charName.value}의 HP가 ${status.dataset.value}만큼 회복되었다`);
+        br();
     });
-    charData.innerHTML = `${postfix} (${key[status.dataset.key]})`;
+    if (postfix != "") {
+        charData.innerHTML = `${postfix} (${key[status.dataset.key]})`;
+    }
 }
 function playerAction(e) {
-    actionReady()
-    var key = JSON.parse(charData.dataset.key);
-    if (!key["action"] && charHp.value > 0) {
-        actionWork(e.dataset.key, function() {
-            normalAtk();
-            if (!stun && monHp.value > 0) {
-                monsterAtk();
-            }
-        }, function() {
-            suddenAtk();
-        }, function() {
-            stunAtk();
-        }, function() {
-            healing(e.dataset.value);
-        });
-        recentlyAction(e);
-        battleResult();
-        br();
+    if (selectChar().length == 0) swal("Caution!", "기사를 선택해주세요");
+    for (let i = 0; i < selectChar().length; i++) {
+        actionReady(i)
+        var key = JSON.parse(charData.dataset.key);
+        if (!key["action"] && charHp.value > 0) {
+            actionWork(e.dataset.key, function() {
+                normalAtk();
+                if (!stun && monHp.value > 0) {
+                    monsterAtk();
+                }
+            }, function() {
+                suddenAtk();
+            }, function() {
+                stunAtk();
+            }, function() {
+                healing(e.dataset.value);
+            });
+            recentlyAction(e);
+            battleResult();
+        }
+        else if (charHp.value == 0) {
+            swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
+        }
+        else {
+            logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
+            br();
+        }
+        battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
     }
-    else if (charHp.value == 0) {
-        swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
-    }
-    else {
-        logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
-        br();
-    }
-    battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
 }
