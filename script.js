@@ -122,54 +122,76 @@ function party3View() {
     nowParty = "party3";
 }
 
-function dataSave() {
+function dataUpload() {
     charvalue = [];
     for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
         charvalue.push(objectSave(i));
     }
-    sheetData = JSON.stringify(charvalue);
-    localStorage.setItem("character", sheetData);
-}
-function dataLoad() {
-    datareset = false;
-    charvalue = JSON.parse(localStorage.getItem("character"));
-    if (charvalue != null) {
-        for (let i = 0; i < charvalue.length; i++) {
-            if (i != 0) {
-                addCharSheet()
+    console.log(JSON.stringify(charvalue[0]));
+    $.ajax(
+        {
+            type:"POST",
+            url:"//localhost/create.php",
+            data: JSON.stringify(charvalue),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function () { alert("성공");},
+            error: function(request,status,error){
+                console.log(request);
+                console.log(error);
+
             }
-            objectLoad(i);
         }
+    )
+}
+function dataDownload() {
+    $.ajax(
+        {
+        type: "POST",
+        async: false,
+        url: "//localhost/load.php",
+        datatype: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            charvalue = JSON.parse(data);
+        }
+    });
+    
+    var cp = $(".char-panel")[0];
+    while (cp.hasChildNodes()) {
+        cp.removeChild(cp.firstChild);
     }
-    turnReset();
-    fps();
+    for (let i = 0; i < charvalue.length; i++) {
+        addCharSheet()
+        objectLoad(i);
+    }
 }
 function objectSave(sheetnum) {
     return {
         name: getby("char-name", sheetnum, 0).value,
         death: getby("char-name", sheetnum, 0).disabled,
-        atk1: getby("atk-box", sheetnum, 0).checked,
         atk2: getby("atk-box", sheetnum, 1).checked,
         atk3: getby("atk-box", sheetnum, 2).checked,
         weapon: getby("weapon-bonus", sheetnum, 0).value,
         armor: getby("armor-bonus", sheetnum, 0).value,
         hp: getby("char-hp", sheetnum, 0).value,
-        hptxt: getby("char-hp", sheetnum, 0).dataset.label,
         charkey: getby("char-recen-act-txt", sheetnum, 0).dataset.key,
-        chartxt: getby("char-recen-act-txt", sheetnum, 0).innerHTML }
+        chartxt: getby("char-recen-act-txt", sheetnum, 0).innerHTML,
+        party: $(".char-sheet")[sheetnum].className
+    }
 }
 function objectLoad(sheetnum) {
     getby("char-name", sheetnum, 0).value = charvalue[sheetnum].name;
-    getby("char-name", sheetnum, 0).disabled = charvalue[sheetnum].death;
-    getby("atk-box", sheetnum, 0).checked = charvalue[sheetnum].atk1;
-    getby("atk-box", sheetnum, 1).checked = charvalue[sheetnum].atk2;
-    getby("atk-box", sheetnum, 2).checked = charvalue[sheetnum].atk3;
-    getby("weapon-bonus", sheetnum, 0).value = charvalue[sheetnum].weapon;
-    getby("armor-bonus", sheetnum, 0).value = charvalue[sheetnum].armor;
-    getby("char-hp", sheetnum, 0).value = charvalue[sheetnum].hp;
-    getby("char-hp", sheetnum, 0).dataset.label = charvalue[sheetnum].hptxt;
+    getby("char-name", sheetnum, 0).disabled = Number(charvalue[sheetnum].death);
+    getby("atk-box", sheetnum, 1).checked = Number(charvalue[sheetnum].atk2);
+    getby("atk-box", sheetnum, 2).checked = Number(charvalue[sheetnum].atk3);
+    getby("weapon-bonus", sheetnum, 0).value = Number(charvalue[sheetnum].weapon);
+    getby("armor-bonus", sheetnum, 0).value = Number(charvalue[sheetnum].armor);
+    getby("char-hp", sheetnum, 0).value = Number(charvalue[sheetnum].hp);
+    getby("char-hp", sheetnum, 0).dataset.label = `${Number(charvalue[sheetnum].hp)} / 500`;
     getby("char-recen-act-txt", sheetnum, 0).dataset.key = charvalue[sheetnum].charkey;
     getby("char-recen-act-txt", sheetnum, 0).innerHTML = charvalue[sheetnum].chartxt;
+    $(".char-sheet")[sheetnum].className = charvalue[sheetnum].party;
 }
 window.onload = function() {
     charPanel = document.getElementsByClassName("char-panel")[0];
@@ -451,17 +473,18 @@ function monsterItemDrop() {
         else monsterItem = dropTable[5];
     }
 
-    for (let i = 0; i < $(`.${nowParty}`).length; i++) {
+    for (let i = 0; i < $(`.${nowParty}`).length; i++) { 
         if (monsterItem.length != 0) {
             var chance = Math.ceil(Math.random() * 100);
-            for (let i = 0; i < monsterItem.length; i++) {
-                if (chance > monsterItem[i][1]) {
-                    if (monsterItem[i][2] <= 5) {
-                        logOutput(`정화 성공! ... 아니, 이것은!! ${monsterItem[i][0]} 을/를 얻었다!`);
+            for (let j = 0; j < monsterItem.length; j++) {
+                if (chance > monsterItem[j][1]) {
+                    var name = $(`.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
+                    if (monsterItem[j][2] <= 5) {
+                        logOutput(`정화 성공! ... 아니, 이것은!! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다!`);
                     }
                     else {
                         if (monsterItem.length > 1) {
-                            logOutput(`정화 성공! ${monsterItem[i][0]} 을/를 얻었다`);
+                            logOutput(`정화 성공! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다`);
                         }
                     }
                     br();
