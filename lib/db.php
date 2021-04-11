@@ -2,13 +2,13 @@
 function createConnect() {
     return mysqli_connect(
         'localhost',
-        'todo',
-        'flfksvmf',
-        'charsheetdata'
+        'artesadmin',
+        'flfksvmf#864513',
+        'artesadmin'
     );
 }
 function select() {
-    $sql = "SELECT * FROM `chardata` order by id";
+    $sql = "SELECT * FROM `charsheetdata` order by id";
     $result = mysqli_query(createConnect(), $sql);
     $data = [];
     for ($i=0; $i < $result->num_rows; $i++) { 
@@ -20,7 +20,7 @@ function create($subject) {
     $conn = createConnect();
     deleteAll();
     for ($i=0; $i < count($subject); $i++) { 
-        $sql = $conn->prepare("INSERT INTO `chardata` (`name`, `death`, `atk2`, `atk3`, `weapon`, `armor`, `hp`, `charkey`, `chartxt`, `party`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $sql = $conn->prepare("INSERT INTO `charsheetdata` (`name`, `death`, `atk2`, `atk3`, `weapon`, `armor`, `hp`, `charkey`, `chartxt`, `party`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $sql->bind_param('siiiiiisss',
         $subject[$i]['name'],
         $subject[$i]['death'],
@@ -37,6 +37,6 @@ function create($subject) {
 }
 function deleteAll() {
     $conn = createConnect();
-    $sql = $conn->prepare("DELETE FROM `chardata`");
+    $sql = $conn->prepare("DELETE FROM `charsheetdata`");
     $sql->execute();
 }

@@ -127,29 +127,25 @@ function dataUpload() {
     for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
         charvalue.push(objectSave(i));
     }
-    console.log(JSON.stringify(charvalue[0]));
-    $.ajax(
-        {
-            type:"POST",
-            url:"//localhost/create.php",
+    $.ajax({
+            type: "POST",
+            url: "//artesadmin.dothome.co.kr/create.php",
             data: JSON.stringify(charvalue),
             dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            success: function () { alert("성공");},
-            error: function(request,status,error){
-                console.log(request);
-                console.log(error);
-
-            }
+            contentType: "application/json; charset=utf-8"
         }
     )
+    swal({
+        icon: 'success',
+        text: '데이터가 저장되었습니다'
+    })
 }
 function dataDownload() {
     $.ajax(
         {
         type: "POST",
         async: false,
-        url: "//localhost/load.php",
+        url: "//artesadmin.dothome.co.kr/load.php",
         datatype: "json",
         contentType: "application/json; charset=utf-8",
         success: function (data) {
