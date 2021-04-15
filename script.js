@@ -30,7 +30,7 @@ var monsterDefeat = 0;
 var sheetData
 var subData;
 var charvalue = [];
-var nowParty;
+var nowParty = "rest";
 
 var monsterItem = [];
 var dropTable = [];
@@ -41,6 +41,49 @@ var item200 = [];
 var item400 = [];
 var itemOther = [];
 
+var dragged;
+
+document.addEventListener("dragstart", function(event) {
+    dragged = event.target;
+  }, false);
+document.addEventListener("dragenter", function(event) {
+    if (event.target.classList[1] == "drag") {
+        event.target.style.width = "120px";
+        event.target.style.transition = "all .2s";
+    }
+}, false);
+document.addEventListener("dragleave", function(event) {
+    if (event.target.classList[1] == "drag") {
+      event.target.style.width = "";
+    }
+}, false);
+document.addEventListener("dragover", function(event) {
+    event.preventDefault();
+}, false);
+document.addEventListener("drop", function(event) {
+    event.preventDefault();
+    event.target.style.width = "";
+    if (event.target.classList[1] == "drag") {
+        for (let i = 0; i < selectChar().length; i++) {
+            selectChar()[i].className = `char-sheet ${event.target.classList[0]}`;
+        }
+    }
+
+    var eTarget;
+    if (event.target.classList[0] == "char-sheet") eTarget = event.target;
+    if (event.target.parentNode.classList[0] == "char-sheet") eTarget = event.target.parentNode;
+    if (event.target.parentNode.parentNode.classList[0] == "char-sheet") eTarget = event.target.parentNode.parentNode;
+
+    for (let i = 0; i < $(".char-name").length; i++) {
+        if ($(".char-name")[i].value == dragged.children[1].value) var dragIndex = i;
+        if ($(".char-name")[i].value == eTarget.children[1].value) var targetIndex = i;
+    }
+    eTarget.before(dragged);
+    if (dragIndex > targetIndex) $(".char-sheet")[dragIndex].after(eTarget);
+    else if (dragIndex < targetIndex) $(".char-sheet")[dragIndex].before(eTarget);
+}, false);
+
+
 function colorChange(obj) {
     if(obj.classList.contains("execution") && obj.selectedIndex > 4) {
         obj.classList.replace = ("execution", "raid");
@@ -49,42 +92,19 @@ function colorChange(obj) {
         obj.classList.replace = ("raid", "execution");
     }
 }
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-function dropRest(ev) {
-    ev.preventDefault();
-    for (let i = 0; i < selectChar().length; i++) {
-        selectChar()[i].className = "char-sheet rest";
+function createParty() {
+    var partys = [];
+    for (let i = 1; i < 9; i++) {
+        partys.push($(`<button class="party${i} drag ml5" onclick="partyView(this)"></button>`));
+    }
+    for (let i = 0; i < partys.length; i++) {
+        partys[i][0].innerHTML = `파티 ${i+1}`; 
+        $(".group-panel")[0].append(partys[i][0]);
     }
 }
-function dropParty1(ev) {
-    ev.preventDefault();
-    for (let i = 0; i < selectChar().length; i++) {
-        selectChar()[i].className = "char-sheet party1";
-    }
-}
-function dropParty2(ev) {
-    ev.preventDefault();
-    for (let i = 0; i < selectChar().length; i++) {
-        selectChar()[i].className = "char-sheet party2";
-    }
-}
-function dropParty3(ev) {
-    ev.preventDefault();
-    for (let i = 0; i < selectChar().length; i++) {
-        selectChar()[i].className = "char-sheet party3";
-    }
-}
-function allView() {
+function partyView(obj) {
     for (let i = 0; i < $(".char-sheet").length; i++) {
-        $(".char-sheet")[i].classList.remove("hidden");
-        $(".input_on-off")[i].checked = false;
-    }
-}
-function restView() {
-    for (let i = 0; i < $(".char-sheet").length; i++) {
-        if ($(".char-sheet")[i].classList.contains("rest")) {
+        if ($(".char-sheet")[i].classList.contains(obj.classList[0])) {
             $(".char-sheet")[i].classList.remove("hidden");
         }
         else {
@@ -92,42 +112,11 @@ function restView() {
         }
         $(".input_on-off")[i].checked = false;
     }
-}
-function party1View() {
-    for (let i = 0; i < $(".char-sheet").length; i++) {
-        if ($(".char-sheet")[i].classList.contains("party1")) {
-            $(".char-sheet")[i].classList.remove("hidden");
-        }
-        else {
-            $(".char-sheet")[i].classList.add("hidden");
-        }
-        $(".input_on-off")[i].checked = false;
+    for (let i = 0; i < $(".drag").length; i++) {
+        $(".drag")[i].style.opacity = 0.7;
     }
-    nowParty = "party1";
-}
-function party2View() {
-    for (let i = 0; i < $(".char-sheet").length; i++) {
-        if ($(".char-sheet")[i].classList.contains("party2")) {
-            $(".char-sheet")[i].classList.remove("hidden");
-        }
-        else {
-            $(".char-sheet")[i].classList.add("hidden");
-        }
-        $(".input_on-off")[i].checked = false;
-    }
-    nowParty = "party2";
-}
-function party3View() {
-    for (let i = 0; i < $(".char-sheet").length; i++) {
-        if ($(".char-sheet")[i].classList.contains("party3")) {
-            $(".char-sheet")[i].classList.remove("hidden");
-        }
-        else {
-            $(".char-sheet")[i].classList.add("hidden");
-        }
-        $(".input_on-off")[i].checked = false;
-    }
-    nowParty = "party3";
+    obj.style.opacity = 1;
+    nowParty = obj.classList[0];
 }
 
 function dataUpload() {
@@ -226,6 +215,7 @@ window.onload = function() {
     snackbar = $('#snackbar');
     charSheet = $(".char-sheet")[0].cloneNode();
     createDropTable();
+    createParty();
     // dataLoad();
 }
 
@@ -247,7 +237,7 @@ function turnReset() {
     }
     stun = false;
     stunCount = 3;
-    stunImmune = 10;
+    stunImmune = 0;
 }
 function logOutput(str) {
     var battleLog = document.createElement("div");
@@ -353,6 +343,13 @@ function increment() {
     }
 }
 
+function allCharSel() {
+    for (let i = 0; i < $(".char-sheet").length; i++) {
+        if(!$(".char-sheet")[i].classList.contains("hidden")) {
+            $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = true;
+        }
+    }
+}
 function selectChar() { 
     var selectChar = [];
     var checkbox = $(".input_on-off");
@@ -375,7 +372,6 @@ function delCharSheet() {
         }
     }
 }
-
 
 function chanceCalc(persent) {
     var result = false
@@ -495,12 +491,12 @@ function monsterItemDrop() {
         else monsterItem = dropTable[5];
     }
 
-    for (let i = 0; i < $(`.${nowParty}`).length; i++) { 
+    for (let i = 0; i < $(`.char-panel>.${nowParty}`).length; i++) { 
         if (monsterItem.length != 0) {
             var chance = Math.floor(Math.random() * 100);
             for (let j = 0; j < monsterItem.length; j++) {
                 if (chance > monsterItem[j][1]) {
-                    var name = $(`.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
+                    var name = $(`.char-panel>.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
                     if (monsterItem[j][2] <= 3) {
                         logOutput(`정화 성공! ... 아니, 이것은!! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다!`);
                     }
@@ -517,7 +513,6 @@ function monsterItemDrop() {
     }
 }
 function actionReady(i) {
-    if (stunImmune == 0) stun = false;
     charName = selectChar()[i].getElementsByClassName("char-name")[0];
     charAtk = atkBoxCheck("p-box", i);
     charHp = selectChar()[i].getElementsByClassName("char-hp")[0];
@@ -604,13 +599,13 @@ function stunAtk() {
         actionReturn = true;
     }
     else {
-        stunCount--;
+        stunCount -= 1;
         if (scar) {
             stun = chanceCalc(50);
             var log = `당황한 마물에게 ${charName.value}이(가) 무력화를 시도 한다...! `;
         }
         else {
-            stun = chanceCalc(5);
+            stun = chanceCalc(100);
             var log = `${charName.value}의 무력화! 과연? `;
         }
         scar = false;
@@ -665,6 +660,11 @@ function battleEnd() {
 }
 function battleResult() {
     charHp.dataset.label = `${charHp.value} / 500`;
+    if (stun && stunImmune == 0) {
+        stun = false;
+        br();
+        logOutput("계속된 공격에 마물이 몸부림치며 깨어났다!");
+    }
     if (battleStart) {
         if (charHp.value <= 0) {
             charName.disabled = true;
@@ -674,8 +674,8 @@ function battleResult() {
             logOutput(log);
         }
         var allAtk = [];
-        for (let i = 0; i < $(`.${nowParty}`).length; i++) {
-            var cd = $(`.${nowParty}`)[i].getElementsByClassName("char-recen-act-txt")[0];
+        for (let i = 0; i < $(`.char-panel>.${nowParty}`).length; i++) {
+            var cd = $(`.char-panel>.${nowParty}`)[i].getElementsByClassName("char-recen-act-txt")[0];
             var key = JSON.parse(cd.dataset.key);
             allAtk.push(key["action"]);
         }
@@ -752,32 +752,35 @@ function recentlyAction(status) {
 }
 function playerAction(e) {
     if (selectChar().length == 0) swal("Caution!", "기사를 선택해주세요");
-    for (let i = 0; i < selectChar().length; i++) {
-        actionReady(i)
-        var key = JSON.parse(charData.dataset.key);
-        if (!key["action"] && charHp.value > 0) {
-            actionWork(e.dataset.key, function() {
-                normalAtk();
-                if (!stun && monHp.value > 0) {
-                    monsterAtk();
-                }
-            }, function() {
-                suddenAtk();
-            }, function() {
-                stunAtk();
-            }, function() {
-                healing(e.dataset.value);
-            });
-            recentlyAction(e);
-            battleResult();
+    else if (nowParty == "rest" && e.dataset.key != "heal") swal("Caution!", "휴식중인 파티는 전투에 참여할 수 없습니다");
+    else {
+        for (let i = 0; i < selectChar().length; i++) {
+            actionReady(i)
+            var key = JSON.parse(charData.dataset.key);
+            if (!key["action"] && charHp.value > 0) {
+                actionWork(e.dataset.key, function() {
+                    normalAtk();
+                    if (!stun && monHp.value > 0) {
+                        monsterAtk();
+                    }
+                }, function() {
+                    suddenAtk();
+                }, function() {
+                    stunAtk();
+                }, function() {
+                    healing(e.dataset.value);
+                });
+                recentlyAction(e);
+                battleResult();
+            }
+            else if (charHp.value == 0) {
+                swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다.`);
+            }
+            else {
+                logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
+                br();
+            }
+            battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
         }
-        else if (charHp.value == 0) {
-            swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다.`);
-        }
-        else {
-            logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
-            br();
-        }
-        battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
     }
 }

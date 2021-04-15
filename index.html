@@ -15,7 +15,7 @@
 
 <body>
     <header class="header">
-        <h1 class="main-headline">Artes Battle Simulator 0.22.0</h1>
+        <h1 class="main-headline">Artes Battle Simulator 0.22.1</h1>
             <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"> SAVE</i>
             <i class="fas fa-cloud-download-alt data-download" onclick="dataDownload()"> LOAD</i>
     </header>
@@ -33,7 +33,7 @@
                     <b class="turn-text f20 mr10">턴</b>
                     <!-- MonsterPanel -->
                     <b class="f20 mr5">마물HP</b>
-                    <select onchange="colorChange(this)" class="monster-hp f20 mr5">
+                    <select class="monster-hp f20 mr5">
                         <option class="execution" value="20">20</option>
                         <option class="execution" value="40">40</option>
                         <option class="execution" value="100">100</option>
@@ -71,11 +71,8 @@
                     <button type="button" data-key="heal" data-value="100" class="heal-btn f16 b" onclick="playerAction(this)">100회복</button>
                 </div>
                 <div class="group-panel mt10">
-                    <button class="all" onclick="allView()">전체</button>
-                    <button class="rest ml5" ondrop="dropRest(event)" ondragover="allowDrop(event)" onclick="restView()">휴식</button>
-                    <button class="party-1 ml5" ondrop="dropParty1(event)" ondragover="allowDrop(event)" onclick="party1View()">파티 1</button>
-                    <button class="party-2 ml5" ondrop="dropParty2(event)" ondragover="allowDrop(event)" onclick="party2View()">파티 2</button>
-                    <button class="party-3 ml5" ondrop="dropParty3(event)" ondragover="allowDrop(event)" onclick="party3View()">파티 3</button>
+                    <button class="all-select" onclick="allCharSel()">All</button>
+                    <button class="rest drag ml5" onclick="partyView(this)">휴식</button>
                 </div>
             </div>
             <!-- CharacterPanel -->
@@ -85,7 +82,7 @@
                         <input type="checkbox" name="switch" class="input_on-off" />
                         <div class="switch_on-off"></div>
                     </label>
-                    <input type="text" class="char-name f16 ml5 mr5" placeholder="캐릭터 이름" tabindex="1" />
+                    <input type="text" class="char-name f16 ml5 mr5" draggable="false" placeholder="캐릭터 이름" tabindex="1" />
                     <label class="f18 mr5">
                         <input type="checkbox" class="atk-box p-box z14" checked disabled />기본
                     </label>

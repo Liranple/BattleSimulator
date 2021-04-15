@@ -320,37 +320,81 @@ input[type="text"], input[type="number"], select {
     border-radius: 10px 10px 0px 0px;
     height: 30px;
     width: 90px;
-    padding: 0px 18px 0px 18px;
+    padding: 0px 10px 0px 10px;
 
     color: #fff;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     text-align: center;
+    
+    transition: background-color, opacity .2s;
+    opacity: 0.7;
 }
-.group-panel>.all {
-    border: 2px solid #505050;
+.group-panel>.all-select {
+    margin-left: 1px;
+    margin-right: 3px;
+    border-radius: 15px 15px 0px 0px;
     border-bottom: 0px;
-    background-color: #bbc1c9;
+    padding: 0px;
+
+    font-size: 12px;
+    
+    height: 30px;
+    width: 25px;
+    min-width: 25px;
+    
+    background-color: #ddd;
+    color: #000;
+    opacity: 1;
+}
+.group-panel>*:hover {
+    opacity: 1;
 }
 .group-panel>.rest {
     border: 2px solid #5c7a5f;
     border-bottom: 0px;
-    background-color: #8fda86;
+    background-color: #7ed675;
+    opacity: 1;
 }
-.group-panel>.party-1 {
-    border: 2px solid #506b88;
+.group-panel>.party1 {
+    border: 2px solid #691e21;
     border-bottom: 0px;
-    background-color: #79a9e9;
+    background-color: #e4484e;
 }
-.group-panel>.party-2 {
-    border: 2px solid #585088;
+.group-panel>.party2 {
+    border: 2px solid #755326;
     border-bottom: 0px;
-    background-color: #8e79e9;
+    background-color: #d89947;
 }
-.group-panel>.party-3 {
-    border: 2px solid #88505c;
+.group-panel>.party3 {
+    border: 2px solid #666121;
     border-bottom: 0px;
-    background-color: #e9799e;
+    background-color: #cac13e;
+}
+.group-panel>.party4 {
+    border: 2px solid #335a2b;
+    border-bottom: 0px;
+    background-color: #6bbf5a;
+}
+.group-panel>.party5 {
+    border: 2px solid #34635e;
+    border-bottom: 0px;
+    background-color: #63beb5;
+}
+.group-panel>.party6 {
+    border: 2px solid #1e4c66;
+    border-bottom: 0px;
+    background-color: #3a90c3;
+}
+.group-panel>.party7 {
+    border: 2px solid #4a266b;
+    border-bottom: 0px;
+    background-color: #7d41b6;
+}
+.group-panel>.party8 {
+    border: 2px solid #852650;
+    border-bottom: 0px;
+    background-color: #d43d80;
 }
 
 .char-panel, .battle-log-panel {
@@ -395,18 +439,35 @@ input[type="text"], input[type="number"], select {
     padding-left: 7px;
     margin-top: 4px;
 }
-.rest {
+
+.char-panel>.rest {
     border-color: #8fda86;
 }
-.party1 {
-    border-color: #79a9e9;
+.char-panel>.party1 {
+    border-color: #d53b40;
 }
-.party2 {
-    border-color: #8e79e9;
+.char-panel>.party2 {
+    border-color: #d89947;
 }
-.party3 {
-    border-color: #e9799e;
+.char-panel>.party3 {
+    border-color: #cac13e;
 }
+.char-panel>.party4 {
+    border-color: #6bbf5a;
+}
+.char-panel>.party5 {
+    border-color: #63beb5;
+}
+.char-panel>.party6 {
+    border-color: #3a90c3;
+}
+.char-panel>.party7 {
+    border-color: #7d41b6;
+}
+.char-panel>.party8 {
+    border-color: #d43d80;
+}
+
 .input_on-off {
     display: none;
 }
