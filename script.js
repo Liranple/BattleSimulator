@@ -18,6 +18,7 @@ var weapon;
 var armor;
 var monAtk;
 var monHp;
+var monType;
 var stun = false;
 var scar = false;
 var stunCount = 3;
@@ -40,7 +41,14 @@ var item200 = [];
 var item400 = [];
 var itemOther = [];
 
-
+function colorChange(obj) {
+    if(obj.classList.contains("execution") && obj.selectedIndex > 4) {
+        obj.classList.replace = ("execution", "raid");
+    }
+    else if(obj.classList.contains("raid") && obj.selectedIndex < 5) {
+        obj.classList.replace = ("raid", "execution");
+    }
+}
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -123,44 +131,64 @@ function party3View() {
 }
 
 function dataUpload() {
-    charvalue = [];
-    for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
-        charvalue.push(objectSave(i));
-    }
-    $.ajax({
-            type: "POST",
-            url: "//artesadmin.dothome.co.kr/create.php",
-            data: JSON.stringify(charvalue),
-            dataType: "json",
-            contentType: "application/json; charset=utf-8"
-        }
-    )
     swal({
-        icon: 'success',
-        text: '데이터가 저장되었습니다'
+        title: "데이터를 저장합니다",
+        text: "※ 기존에 있던 데이터를 덮어씌웁니다 ※",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
     })
-}
-function dataDownload() {
-    $.ajax(
-        {
-        type: "POST",
-        async: false,
-        url: "//artesadmin.dothome.co.kr/load.php",
-        datatype: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function (data) {
-            charvalue = JSON.parse(data);
+    .then((willDelete) => {
+        if (willDelete) {
+            charvalue = [];
+            for (let i = 0; i < document.getElementsByClassName("char-sheet").length; i++) {
+                charvalue.push(objectSave(i));
+            }
+            $.ajax({
+                async: false,        
+                type: "POST",
+                url: "//artesadmin.dothome.co.kr/create.php",
+                data: JSON.stringify(charvalue),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8"
+            });
+            swal({
+                icon: "success",
+                text: "데이터가 저장되었습니다"
+            });
         }
     });
-    
-    var cp = $(".char-panel")[0];
-    while (cp.hasChildNodes()) {
-        cp.removeChild(cp.firstChild);
-    }
-    for (let i = 0; i < charvalue.length; i++) {
-        addCharSheet()
-        objectLoad(i);
-    }
+}
+function dataDownload() {
+    swal({
+        title: "데이터를 불러옵니다",
+        text: "※ 기존에 있던 데이터를 덮어씌웁니다 ※",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    })
+    .then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "//artesadmin.dothome.co.kr/load.php",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    charvalue = JSON.parse(data);
+                }
+            });
+            var cp = $(".char-panel")[0];
+            while (cp.hasChildNodes()) {
+                cp.removeChild(cp.firstChild);
+            }
+            for (let i = 0; i < charvalue.length; i++) {
+                addCharSheet()
+                objectLoad(i);
+            }
+        }
+    });
 }
 function objectSave(sheetnum) {
     return {
@@ -221,9 +249,8 @@ function turnReset() {
     stunCount = 3;
     stunImmune = 10;
 }
-function logOutput(str, cl) {
+function logOutput(str) {
     var battleLog = document.createElement("div");
-    battleLog.className = cl;
     battleLog.innerHTML = str;
     battleLogPanel.appendChild(battleLog);
 }
@@ -352,7 +379,7 @@ function delCharSheet() {
 
 function chanceCalc(persent) {
     var result = false
-    var chance = Math.ceil(Math.random() * 100);
+    var chance = Math.floor(Math.random() * 100);
     if (chance < persent) {
         result = true;
     }
@@ -374,7 +401,7 @@ function atkBoxCheck(e, i = 0) {
     var damage = new Array(atkCount);
 
     for (var i = 0; i < atkCount; i++) {
-        var atkChance = Math.ceil(Math.random() * 307);
+        var atkChance = Math.floor(Math.random() * 307);
         for (var j = 0; j < chanceTable.length; j++) {
             if (atkChance < chanceTable[j]) {
                 damage[i] = 100 - j * 10;
@@ -387,71 +414,70 @@ function atkBoxCheck(e, i = 0) {
 function createDropTable() {
     dropTable = [
         item20 = [
-            ["마물의 잔해 1개", 80, 20],
-            ["마물의 잔해 2개", 60, 20],
-            ["헤진 붕대 (10)", 50, 10],
-            ["고급 붕대 (100)", 40, 10],
-            ["30 아르", 30, 10],
-            ["리브레 포션 (30)", 20, 10],
-            ["대용량 리브레 포션 (50)", 10, 10],
-            ["보호부적 (0)", 5, 5],
-            ["빛바랜 루비", 0, 5]
+            ["마물의 잔해 1개", 70, 30],
+            ["마물의 잔해 2개", 44, 26],
+            ["헤진 붕대 (10)", 34, 10],
+            ["고급 붕대 (100)", 29, 5],
+            ["30 아르", 19, 10],
+            ["리브레 포션 (30)", 9, 10],
+            ["대용량 리브레 포션 (50)", 4, 5],
+            ["보호부적 (0)", 1, 3],
+            ["빛바랜 루비", 0, 1]
         ],
         item40 = [
-            ["마물의 잔해 1개", 80, 20],
-            ["마물의 잔해 2개", 65, 15],
-            ["헤진 붕대 (10)", 55, 10],
-            ["고급 붕대 (100)", 45, 10],
-            ["50 아르", 35, 10],
-            ["리브레 포션 (30)", 25, 10],
-            ["대용량 리브레 포션 (50)", 15, 10],
-            ["보호부적 (0)", 10, 5],
-            ["찢어진 일기장 1", 5, 5],
-            ["찢어진 일기장 2", 2, 3],
-            ["빛바랜 사파이어", 0, 2]
+            ["마물의 잔해 1개", 70, 30],
+            ["마물의 잔해 2개", 45, 25],
+            ["헤진 붕대 (10)", 35, 10],
+            ["고급 붕대 (100)", 32, 3],
+            ["50 아르", 22, 10],
+            ["리브레 포션 (30)", 12, 10],
+            ["대용량 리브레 포션 (50)", 8, 4],
+            ["보호부적 (0)", 5, 3],
+            ["찢어진 일기장 1", 3, 2],
+            ["찢어진 일기장 2", 1, 2],
+            ["빛바랜 사파이어", 0, 1]
         ],
         item100 = [
-            ["마물의 잔해 1개", 80, 20],
-            ["마물의 잔해 2개", 70, 10],
-            ["굳게 잠긴 상자", 60, 10],
-            ["고급 붕대 (100)", 50, 10],
-            ["100 아르", 40, 10],
-            ["리브레 포션 (30)", 30, 10],
-            ["대용량 리브레 포션 (50)", 20, 10],
-            ["보호부적 (0)", 15, 5],
-            ["업화의 무기(10)", 10, 5],
-            ["찢어진 사진첩 1", 5, 5],
-            ["찢어진 사진첩 2", 2, 3],
-            ["빛바랜 에메랄드", 0, 2]
+            ["마물의 잔해 1개", 70, 30],
+            ["마물의 잔해 2개", 50, 20],
+            ["굳게 잠긴 상자", 40, 10],
+            ["고급 붕대 (100)", 35, 5],
+            ["100 아르", 25, 10],
+            ["리브레 포션 (30)", 15, 10],
+            ["대용량 리브레 포션 (50)", 10, 5],
+            ["보호부적 (0)", 7, 3],
+            ["업화의 무기(10)", 5, 2],
+            ["찢어진 사진 1", 3, 2],
+            ["찢어진 사진 2", 1, 2],
+            ["빛바랜 에메랄드", 0, 1]
         ],
         item200 = [
-            ["마물의 잔해 1개", 85, 15],
-            ["마물의 잔해 2개", 75, 10],
-            ["굳게 잠긴 상자", 65, 10],
-            ["고급 붕대 (100)", 55, 10],
-            ["누군가의 주머니", 45, 10],
-            ["500 아르", 35, 10],
-            ["리브레 포션 (30)", 25, 10],
-            ["대용량 리브레 포션 (50)", 15, 10],
-            ["보호부적 (0)", 10, 5],
-            ["신념의 무기 (20)", 5, 5],
-            ["깨어난 업화의 무기 (20)", 3, 2],
-            ["빛바랜 자수정", 1, 2],
+            ["마물의 잔해 1개", 70, 30],
+            ["마물의 잔해 2개", 48, 22],
+            ["굳게 잠긴 상자", 38, 10],
+            ["고급 붕대 (100)", 33, 5],
+            ["누군가의 주머니", 23, 10],
+            ["500 아르", 13, 10],
+            ["대용량 리브레 포션 (50)", 8, 5],
+            ["보호부적 (0)", 5, 3],
+            ["신념의 무기 (20)", 3, 2],
+            ["깨어난 업화의 무기 (20)", 2, 1],
+            ["빛바랜 자수정", 1, 1],
             ["빛바랜 다이아몬드", 0, 1]
         ],
         item400 = [
-            ["마물의 잔해 1개", 80, 20],
-            ["마물의 잔해 2개", 65, 15],
-            ["굳게 잠긴 상자", 55, 10],
-            ["고급 붕대 (100)", 45, 10],
-            ["누군가의 주머니", 35, 10],
-            ["1000 아르", 25, 10],
-            ["대용량 리브레 포션 (50)", 15, 10],
-            ["보호부적 (0)", 10, 5],
-            ["업화의 무기 (10)", 7, 3]
-            ["신념의 무기 (20)", 5, 2],
-            ["깨어난 신념의 무기 (30)", 3, 2],
-            ["빛바랜 오팔", 1, 2],
+            ["마물의 잔해 1개", 75, 25],
+            ["마물의 잔해 2개", 50, 25],
+            ["굳게 잠긴 상자", 40, 10],
+            ["고급 붕대 (100)", 35, 5],
+            ["누군가의 주머니", 25, 10],
+            ["1000 아르", 15, 10],
+            ["대용량 리브레 포션 (50)", 10, 5],
+            ["보호부적 (0)", 7, 3],
+            ["업화의 무기 (10)", 5, 2]
+            ["신념의 무기 (20)", 3, 2],
+            ["깨어난 신념의 무기 (30)", 2, 1],
+            ["빛바랜 오팔", 1, 1],
             ["빛바랜 다이아몬드", 0, 1]
         ],
         itemOther = [
@@ -471,16 +497,16 @@ function monsterItemDrop() {
 
     for (let i = 0; i < $(`.${nowParty}`).length; i++) { 
         if (monsterItem.length != 0) {
-            var chance = Math.ceil(Math.random() * 100);
+            var chance = Math.floor(Math.random() * 100);
             for (let j = 0; j < monsterItem.length; j++) {
                 if (chance > monsterItem[j][1]) {
                     var name = $(`.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
-                    if (monsterItem[j][2] <= 5) {
+                    if (monsterItem[j][2] <= 3) {
                         logOutput(`정화 성공! ... 아니, 이것은!! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다!`);
                     }
                     else {
                         if (monsterItem.length > 1) {
-                            logOutput(`정화 성공! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다`);
+                            logOutput(`정화 성공! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다.`);
                         }
                     }
                     br();
@@ -504,6 +530,7 @@ function actionReady(i) {
     if (armor == "") armor = 0;
     monAtk = atkBoxCheck("m-box");
     monHp = $(".monster-hp")[0];
+    monType = monHp.options[monHp.selectedIndex].className;
     monHp = monHp.options[monHp.selectedIndex];
 }
 
@@ -566,14 +593,14 @@ function suddenAtk() {
     else { 
         var log = `${charName.value}은/는/ 파고 들었지만 마물에게 간파 당했다! `;
         totalDamage = monAtk.reduce((a, b) => a + b) * 3;
-        log += `3.0 X (${monAtk.join(" + ")}) = ${totalDamage} 역습으로 큰 피해를 받았다`;
+        log += `3.0 X (${monAtk.join(" + ")}) = ${totalDamage} 역습으로 큰 피해를 받았다.`;
         charHp.value -= totalDamage;
         logOutput(log);
     }
 }
 function stunAtk() {
     if (stun) {
-        var log = "이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가";
+        var log = "이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가.";
         actionReturn = true;
     }
     else {
@@ -614,41 +641,68 @@ function stunAtk() {
 function healing(healPoint) {
     charHp.value += Number(healPoint);
 }
+function battleEnd() {
+    monHp.value = monHp.innerHTML;
+    time = 0;
+    running = false;
+    battleStart = false;
+    clearTimeout(timerid);
+    document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
+    var startPause = document.getElementsByClassName("timer-start-pause")[0];
+    startPause.classList.replace("fa-pause", "fa-play");
+    document.getElementsByClassName("monster-hp")[0].disabled = false;
+    turnReset();
+    var atkBtn = document.getElementsByClassName("atk-btn");
+    logOutput(`전투 대기 중...`);
+    for (let i = 0; i < atkBtn.length; i++) {
+        if (!running) {
+            atkBtn[i].disabled = true;
+        }
+        else {
+            atkBtn[i].disabled = false;
+        }
+    }
+}
 function battleResult() {
     charHp.dataset.label = `${charHp.value} / 500`;
     if (battleStart) {
+        if (charHp.value <= 0) {
+            charName.disabled = true;
+            charHp.value = 0;
+            var log = `${charName.value} 사망.`;
+            br();
+            logOutput(log);
+        }
+        var allAtk = [];
+        for (let i = 0; i < $(`.${nowParty}`).length; i++) {
+            var cd = $(`.${nowParty}`)[i].getElementsByClassName("char-recen-act-txt")[0];
+            var key = JSON.parse(cd.dataset.key);
+            allAtk.push(key["action"]);
+        }
+        if (allAtk.every(function(subject) {
+            return subject == true;
+        })) {
+            var run = true;
+        }
+        if (monHp.value > 0 && run && monType == "execution") {
+            var failTxt = [
+                "전력을 다해 공격했지만 마물을 놓쳐버렸다... 처형 실패.",
+                "마물이 가까스로 공격을 피하더니 도망쳐버렸다! 처형 실패.",
+                "이런, 공격이 얕았나. 마무리를 하지 못하고 마물을 놓쳐버렸다. 처형 실패."
+            ];
+            var ran = Math.round(Math.random() * 2);
+            br();
+            logOutput(failTxt[ran]);
+            br();
+            battleEnd();
+        }
         if (monHp.value == 0) {
-            monHp.value = monHp.innerHTML;
             log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다.`;
             logOutput(log);
             br();
             monsterItemDrop();
-            turnReset();
-            running = false;
-            battleStart = false;
             monsterDefeat += 1;
-            time = 0;
-            clearTimeout(timerid);
-            document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
-            var startPause = document.getElementsByClassName("timer-start-pause")[0];
-            startPause.classList.replace("fa-pause", "fa-play");
-            document.getElementsByClassName("monster-hp")[0].disabled = false;
-            logOutput(`전투 대기 중...`);
-            var atkBtn = document.getElementsByClassName("atk-btn");
-            for (let i = 0; i < atkBtn.length; i++) {
-                if (!running) {
-                    atkBtn[i].disabled = true;
-                }
-                else {
-                    atkBtn[i].disabled = false;
-                }
-            }
-        }
-        if (charHp.value <= 0) {
-            charName.disabled = true;
-            charHp.value = 0;
-            var log = `${charName.value} 사망`;
-            logOutput(log);
+            battleEnd();
         }
         br();
     }
@@ -689,7 +743,7 @@ function recentlyAction(status) {
         postfix = "무력화 시도";
     }, function() {
         postfix = `HP ${status.dataset.value}회복`;
-        logOutput(`${charName.value}의 HP가 ${status.dataset.value}만큼 회복되었다`);
+        logOutput(`${charName.value}의 HP가 ${status.dataset.value}만큼 회복되었다.`);
         br();
     });
     if (postfix != "") {
@@ -718,10 +772,10 @@ function playerAction(e) {
             battleResult();
         }
         else if (charHp.value == 0) {
-            swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
+            swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다.`);
         }
         else {
-            logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가`);
+            logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
             br();
         }
         battleLogPanel.scrollTop = battleLogPanel.scrollHeight;

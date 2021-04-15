@@ -16,8 +16,8 @@
 <body>
     <header class="header">
         <h1 class="main-headline">Artes Battle Simulator 0.22.0</h1>
-            <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"></i>
-            <i class="fas fa-cloud-download-alt data-download" onclick="dataDownload()"></i>
+            <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"> SAVE</i>
+            <i class="fas fa-cloud-download-alt data-download" onclick="dataDownload()"> LOAD</i>
     </header>
     <section class="section">
         <article class="article">
@@ -33,7 +33,7 @@
                     <b class="turn-text f20 mr10">턴</b>
                     <!-- MonsterPanel -->
                     <b class="f20 mr5">마물HP</b>
-                    <select class="monster-hp f20 mr5">
+                    <select onchange="colorChange(this)" class="monster-hp f20 mr5">
                         <option class="execution" value="20">20</option>
                         <option class="execution" value="40">40</option>
                         <option class="execution" value="100">100</option>

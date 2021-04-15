@@ -150,6 +150,14 @@ input[type="text"], input[type="number"], select {
 .hidden {
     display: none !important;
 }
+.execution {
+    color: #379337 !important;
+    font-weight: bold;
+}
+.raid {
+    color: #ed4956 !important;
+    font-weight: bold;
+}
 
 /* normal class */
 
@@ -214,17 +222,17 @@ input[type="text"], input[type="number"], select {
 }
 .data-upload {
     position: absolute;
-    right: 75px;
+    right: 180px;
     
     font-size: 32px;
-    color: white;
+    color: #fff;
 }
 .data-download {
     position: absolute;
-    right: 20px;
+    right: 22px;
     
     font-size: 32px;
-    color: white;
+    color: #fff;
 }
 .top-panel, .action-panel {
     display: flex;
