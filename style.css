@@ -161,12 +161,6 @@ input[type="text"], input[type="number"], select {
     color: #ed4956 !important;
     font-weight: bold;
 }
-.sort-ASC {
-
-}
-.sort-DESC {
-
-}
 
 /* normal class */
 
@@ -248,7 +242,7 @@ input[type="text"], input[type="number"], select {
     
     height: 35px;
 }
-.top-panel > b, i, select, label, .action-panel > i, button{
+.top-panel > b, i, select, label, .action-panel > i, button, input{
     margin-top: auto;
     margin-bottom: auto;
 }
@@ -516,8 +510,22 @@ input[type="text"], input[type="number"], select {
     border-color: #d43d80;
 }
 
-.input_on-off {
+.input_on-off, .type_on-off {
     display: none;
+}
+.battle-type {
+    border-radius: 9px;
+    height: 25px;
+    width: 18px;
+    
+    background-color: #ed4956;
+    color: #fff;
+
+    cursor: pointer;
+    transition: background-color .2s;
+}
+.type_on-off:checked + .battle-type {
+    background-color: #379337;
 }
 .switch_on-off {
     margin-right: 2px;
@@ -535,12 +543,15 @@ input[type="text"], input[type="number"], select {
 .input_on-off:checked + .switch_on-off {
     background-color: #0bba82;
 }
+.input_on-off:disabled + .switch_on-off {
+    background-color: #fab432;
+}
 .char-name {
     border: 2px solid #bdc3c0;
     padding: 7px 7px;
 
     height: 30px;
-    width: 200px;
+    width: 150px;
 
     background-color: #fff;
     color: #495057;

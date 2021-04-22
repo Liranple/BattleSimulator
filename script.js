@@ -18,13 +18,12 @@ var weapon;
 var armor;
 var monAtk;
 var monHp;
-var monType;
 var stun = false;
 var panic = false;
 var suddenCount = 5;
 var stunCount = 3;
 var stunImmune = 0;
-var actionReturn = false;
+var stunAble = true;
 // monsterDefeat 현재는 사용 안함 추후에 처치 수 필요할 때 사용
 var monsterDefeat = 0;
 
@@ -353,19 +352,20 @@ function br() {
 function turnReset() {
     var chars = $(".char-recen-act-txt");
     for (let i = 0; i < chars.length; i++) {
+        $(".input_on-off")[i].disabled = false;
         var key = JSON.parse(chars[i].dataset.key);
         key["action"] = false;
         chars[i].dataset.key = JSON.stringify(key);
     }
     stun = false;
     stunImmune = 0;
+    stunAble = true;
 }
 function logOutput(str) {
     var battleLog = document.createElement("div");
     battleLog.innerHTML = str;
     battleLogPanel.appendChild(battleLog);
 }
-
 function btnOnOff() {
     var healBtn = document.getElementsByClassName("heal-btn");
     for (let i = 0; i < healBtn.length; i++) {
@@ -386,6 +386,12 @@ function btnOnOff() {
         }
     }
 }
+function monTypeCheck() {
+    var monType = $(".monster-hp")[0].options[$(".monster-hp")[0].selectedIndex].className;
+    if (monType == "execution") $(".type_on-off")[0].checked = true;
+    if (monType == "raid") $(".type_on-off")[0].checked = false;
+}
+
 function battleStartPause(e) {
     if (!running) {
         running = true;
@@ -451,9 +457,8 @@ function increment() {
             if (secs < 10) {
                 secs = "0" + secs;
             }
-            document.getElementsByClassName("turn-text")[0].innerText=`${turn}`;
+            $(".turn-text")[0].innerText=`${turn}`;
             if (subTime >= 9000 && subTime % 9000 == 0) {
-                turnReset();
                 var log = "";
                 if (subTime >= 36000) {
                     log = `${subHours}시간 `;
@@ -461,8 +466,11 @@ function increment() {
                 log += `${subMins}분 경과. ${subTurn}턴 입니다.`;
                 logOutput(log);
                 br();
+                if (stun && stunCount == 0) logOutput("마물은 매서운 기운을 내뿜으며 몸의 감각을 극대화 합니다.");
+                else if (stun) logOutput("시간이 지나 마물이 다시 힘을 되찾은 것 같다.");
+                turnReset();
             }
-            document.getElementsByClassName("timer")[0].innerText=`${hours} : ${mins} : ${secs}`;
+            $(".timer")[0].innerText=`${hours} : ${mins} : ${secs}`;
             increment();
         }, 99)
     }
@@ -472,7 +480,9 @@ function allCharSel() {
     var charCheck = [];
     for (let i = 0; i < $(".char-sheet").length; i++) {
         for (let j = 0; j < $(".input_on-off").length; j++) {
-            charCheck.push($(".input_on-off")[j].checked);
+            if ($(".input_on-off")[j].disabled == false) {
+                charCheck.push($(".input_on-off")[j].checked);
+            }
         }
         if(charCheck.every(function(check) {
             return check == true;
@@ -483,7 +493,9 @@ function allCharSel() {
             $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = false;
         }
         else if(!$(".char-sheet")[i].classList.contains("hidden")) {
-            $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = true;
+            if ($(".input_on-off")[i].disabled == false) {
+                $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = true;
+            }
         }
     }
 }
@@ -543,6 +555,15 @@ function atkBoxCheck(e, i = 0) {
         }
     }
     return damage;
+}
+function charNowHp (damage) {
+    charHp.value -= damage;
+    logOutput(`${charName.value}의 남은 HP : ${charHp.value}`)
+}
+function monNowHp (damage) {
+    monHp.value -= damage;
+    if (monHp.value <= 0) monHp.value = 0;
+    logOutput(`마물의 남은 HP : ${monHp.value}`);
 }
 function createDropTable() {
     dropTable = [
@@ -635,12 +656,12 @@ function monsterItemDrop() {
                 if (chance >= monsterItem[j][1]) {
                     var name = $(`.char-panel>.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
                     if (monsterItem[j][2] <= 3) {
-                        logOutput(`정화 성공! ... 아니, 이것은!! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다!`);
+                        logOutput(`정화 성공! ... 아니, 이것은!! ${pp(name, "은는")} ${pp(monsterItem[j][0], "을를")} 얻었다!`);
                         br();
                     }
                     else {
                         if (monsterItem.length >= 1) {
-                            logOutput(`정화 성공! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다.`);
+                            logOutput(`정화 성공! ${pp(name, "은는")} ${pp(monsterItem[j][0], "을를")} 얻었다.`);
                             br();
                         }
                     }
@@ -663,7 +684,6 @@ function actionReady(i) {
     if (armor == "") armor = 0;
     monAtk = atkBoxCheck("m-box");
     monHp = $(".monster-hp")[0];
-    monType = monHp.options[monHp.selectedIndex].className;
     monHp = monHp.options[monHp.selectedIndex];
 }
 function monsterAtk() {
@@ -704,7 +724,6 @@ function suddenAtk() {
     panic = chanceCalc(30);
     var charDamage = charAtk.reduce((a, b) => a + b) * 3;
     var monDamage = monAtk.reduce((a, b) => a + b) * 3;
-    var success;
 
     if (suddenCount <= 0) {
         logOutput("※ 이 마물은 더 이상 기습이 통하지 않습니다.");
@@ -715,20 +734,20 @@ function suddenAtk() {
             logOutput(`마물은 간신히 몸을 틀어 ${charName.value}의 기습을 피해냅니다.`);
         }
         else {
-            success = true;
             stunImmune -= 1;
             logOutput(`무력화된 마물에게 ${charName.value}의 기습 공격! 3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${charDamage} 피해를 주었다.`);
+            monNowHp(charDamage);
         }
     }
     else if (panic) {
-        success = true;
         logOutput(`마물이 방심한 틈을 타 ${charName.value}의 기습 공격! 3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${charDamage} 피해를 주었다.`);
+        monNowHp(charDamage);
         logOutput("마물이 당황한 것 같다!");
         logOutput("※ 무력화 시도 시 확률이 상승합니다.");
     }
     else {
-        success = false;
         logOutput(`${pp(charName.value, "은는")} 파고 들었지만 마물에게 간파 당했다! 3.0 X (${monAtk.join(" + ")}) = ${monDamage} 역습으로 큰 피해를 받았다.`);
+        charNowHp(monDamage);
     }
 
     suddenCount -= 1;
@@ -738,61 +757,44 @@ function suddenAtk() {
     if (suddenCount == 0) {
         logOutput("마물은 반복된 기습에 분노하며 온 신경을 곤두세웁니다.");
     }
-
-    if (success) monNowHp(charDamage);
-    else if (!success) charNowHp(monDamage);
-    else ;
 }
-
-function charNowHp (damage) {
-    charHp.value -= damage;
-    logOutput(`${charName.value}의 남은 HP : ${charHp.value}`)
-}
-function monNowHp (damage) {
-    monHp.value -= damage;
-    if (monHp.value <= 0) monHp.value = 0;
-    logOutput(`마물의 남은 HP : ${monHp.value}`);
-}
-
 function stunAtk() {
     if (stun) {
-        var log = "이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가.";
-        actionReturn = true;
+        logOutput("※ 이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가.");
+        return;
+    }
+    else if (!stunAble || stunCount <= 0) {
+        if (!stunAble) logOutput("※ 이번 턴에는 이미 무력화를 성공했습니다.");
+        logOutput(`${charName.value}의 무력화는 마물에게 아무런 효과를 줄 수 없었다.`);
+    }
+    else if (panic) {
+        stun = chanceCalc(50);
+        var log = `당황한 마물에게 ${pp(charName.value, "은는")} 무력화를 시도 한다...! `;
+    }
+    else if (stunAble) {
+        stun = chanceCalc(5);
+        var log = `${charName.value}의 무력화! 과연? `;
+    }
+
+    if (stun && stunAble) {
+        stunCount -= 1;
+        stunImmune = 10;
+        stunAble = false;
+        log += "성공!";
+        logOutput(log);
+        if (stunCount == 0) logOutput("무력화는 성공했지만, 마물의 상태가 심상치 않아 보입니다.");
+        logOutput("※ 마물이 이번 턴, 일정 공격 구간까지 반격을 하지 않습니다.");
+        logOutput(`(남은 무력화 성공 횟수 : ${stunCount})`);
     }
     else {
-        if (panic) {
-            stun = chanceCalc(50);
-            var log = `당황한 마물에게 ${charName.value}이/가 무력화를 시도 한다...! `;
-        }
-        else {
-            stun = chanceCalc(5);
-            var log = `${charName.value}의 무력화! 과연? `;
-        }
-        panic = false;
-       
-        var totalDamage;
-        if (stun) {
-            stunCount -= 1;
-            stunImmune = 10;
-            log += "성공!";
+        if (stunAble) { 
+            log += "실패!";
             logOutput(log);
-            log = `마물이 이번 턴, 일정 공격 구간에 반격을 하지 않습니다. (남은 성공가능 횟수 : ${stunCount})`;
         }
-        else {
-            if (stunCount < 0) {
-                log = "이번 전투에서는 더 이상 무력화를 시도할 수 없다.";
-                logOutput(log);
-            }
-            else {
-                log += "실패!";
-                logOutput(log);
-            }
-            totalDamage = 1.1 * monAtk[0];
-            log = `1.1 X ${monAtk[0]} = ${Math.round(totalDamage)} 피해를 받았다.`;
-            charHp.value -= Math.round(totalDamage);
-        }
+        var monDamage = (monAtk.reduce((a, b) => a + b)) * 1.1;
+        logOutput(`1.1 X (${monAtk.join(" + ")}) = ${Math.round(monDamage)} 피해를 받았다.`);
+        charNowHp(monDamage);
     }
-    logOutput(log);
 }
 function healing(healPoint) {
     charHp.value += Number(healPoint);
@@ -800,6 +802,9 @@ function healing(healPoint) {
 function battleEnd() {
     monHp.value = monHp.innerHTML;
     time = 0;
+    stunAble = true;
+    stunCount = 3;
+    suddenCount = 5;
     $(".turn-text")[0].innerText = "0";
     running = false;
     battleStart = false;
@@ -820,20 +825,26 @@ function battleEnd() {
         }
     }
 }
-function battleResult() {
+function battleResult(act) {
     charHp.dataset.label = `${charHp.value} / 500`;
     if (stun && stunImmune == 0) {
         stun = false;
         br();
-        logOutput("계속된 공격에 마물이 몸부림치며 깨어났다!");
+        if (stunCount == 0) logOutput("마물은 매서운 기운을 내뿜으며 몸의 감각을 극대화 합니다.");
+        else logOutput("계속된 공격에 마물이 몸부림치며 깨어났다!");
+    }
+    if (panic) {
+        if (!stun && (act == "attack" || act == "stun")) {
+            panic = false;
+            logOutput("마물은 정신을 되찾은 것 같다.");
+        }
     }
     if (battleStart) {
         if (charHp.value <= 0) {
             charName.disabled = true;
             charHp.value = 0;
-            var log = `${charName.value} 사망.`;
             br();
-            logOutput(log);
+            logOutput(`${charName.value} 사망.`);
         }
         var allAtk = [];
         for (let i = 0; i < $(`.char-panel>.${nowParty}`).length; i++) {
@@ -846,7 +857,7 @@ function battleResult() {
         })) {
             var run = true;
         }
-        if (monHp.value > 0 && run && monType == "execution") {
+        if (monHp.value > 0 && run && $(".type_on-off")[0].checked) {
             var failTxt = [
                 "전력을 다해 공격했지만 마물을 놓쳐버렸다... 처형 실패.",
                 "마물이 가까스로 공격을 피하더니 도망쳐버렸다! 처형 실패.",
@@ -859,8 +870,13 @@ function battleResult() {
             battleEnd();
         }
         if (monHp.value == 0) {
-            log = `${charName.value}의 마지막 일격으로 마물이 쓰러졌다.`;
-            logOutput(log);
+            var victoryTxt = [
+                `${charName.value}의 마지막 일격으로 마물은 피를 쏟아내며 쓰러졌다.`,
+                `${charName.value}의 날카로운 공격에 마물은 괴성을 지르며 쓰러졌다.`,
+                `${charName.value}의 무자비한 무기는 마물의 숨통을 끊어내고는 작게 진동했다.`
+            ]
+            var ran = Math.round(Math.random() * 2);
+            logOutput(victoryTxt[ran]);
             br();
             monsterItemDrop();
             monsterDefeat += 1;
@@ -889,9 +905,8 @@ function recentlyAction(status) {
     var key = JSON.parse(charData.dataset.key);
     if (running || status.dataset.key == "heal") {
         key[status.dataset.key] += 1;
-        if (actionReturn == false && status.dataset.key != "heal") {
+        if (status.dataset.key != "heal") {
             key["action"] = true;
-            actionReturn == true;
         }
     }
     charData.dataset.key = JSON.stringify(key);
@@ -920,6 +935,7 @@ function playerAction(e) {
             actionReady(i)
             var key = JSON.parse(charData.dataset.key);
             if (!key["action"] && charHp.value > 0) {
+                if (e.dataset.key != "heal") selectChar()[i].getElementsByClassName("input_on-off")[0].disabled = true;
                 actionWork(e.dataset.key, function() {
                     normalAtk();
                     if (!stun && monHp.value > 0) {
@@ -933,16 +949,19 @@ function playerAction(e) {
                     healing(e.dataset.value);
                 });
                 recentlyAction(e);
-                battleResult();
+                battleResult(e.dataset.key);
             }
             else if (charHp.value == 0) {
-                swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
+                swal("Caution!", `${pp(charName.value, "은는")} 사망하여 더 이상 행동할 수 없습니다`);
             }
             else {
-                logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
+                logOutput(`${pp(charName.value, "은는")} 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
                 br();
             }
             battleLogPanel.scrollTop = battleLogPanel.scrollHeight;
+        }
+        for (let i = 0; i < $(".char-sheet").length; i++) {
+            $(".input_on-off")[i].checked = false;
         }
     }
 }
