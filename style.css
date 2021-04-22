@@ -56,6 +56,9 @@ input[type="text"], input[type="number"], select {
 .pl5 {
     padding-left: 5px;
 }
+.pr5 {
+    padding-right: 5px;
+}
 
 .mt5 {
     margin-top: 5px;
@@ -158,6 +161,12 @@ input[type="text"], input[type="number"], select {
     color: #ed4956 !important;
     font-weight: bold;
 }
+.sort-ASC {
+
+}
+.sort-DESC {
+
+}
 
 /* normal class */
 
@@ -183,7 +192,7 @@ input[type="text"], input[type="number"], select {
     padding: 10px;
     
     width: 65%;
-    min-width: 740px;
+    min-width: 745px;
     height: 100%;
 }
 .aside {
@@ -330,23 +339,6 @@ input[type="text"], input[type="number"], select {
     transition: background-color, opacity .2s;
     opacity: 0.7;
 }
-.group-panel>.all-select {
-    margin-left: 1px;
-    margin-right: 3px;
-    border-radius: 15px 15px 0px 0px;
-    border-bottom: 0px;
-    padding: 0px;
-
-    font-size: 12px;
-    
-    height: 30px;
-    width: 25px;
-    min-width: 25px;
-    
-    background-color: #ddd;
-    color: #000;
-    opacity: 1;
-}
 .group-panel>*:hover {
     opacity: 1;
 }
@@ -354,7 +346,6 @@ input[type="text"], input[type="number"], select {
     border: 2px solid #5c7a5f;
     border-bottom: 0px;
     background-color: #7ed675;
-    opacity: 1;
 }
 .group-panel>.party1 {
     border: 2px solid #691e21;
@@ -396,7 +387,64 @@ input[type="text"], input[type="number"], select {
     border-bottom: 0px;
     background-color: #d43d80;
 }
+.sort-panel {
+    display: flex;
+    
+    height: 28px;
+}
+.sort-panel>* {
+    position: relative;
+    cursor: pointer;
+    
+    width: 50px;
 
+    color: #999;
+    
+    transition: color .2s;
+}
+.all-select {
+    margin-left: 6px;
+    margin-right: 34px;
+
+    width: 0;
+
+    font-size: 23px;
+
+    color:#ed4956;
+    transition: color .2s;
+}
+.all-select:hover {
+    color:#bd3337;
+}
+.all-select:active {
+    color:#0bba82;
+}
+.sort-name {
+    margin-right: 155px;
+}
+.sort-dice {
+    width: 65px;
+    margin-right: 153px;
+}
+.sort-weapon {
+    margin-right: 11px;
+}
+.sort-armor {
+    margin-right: 18px;
+}
+.sort-ASC > .sort-t, .sort-ASC > .fa-sort-up {
+    color:#1e0bc7
+}
+.sort-DESC > .sort-t, .sort-DESC > .fa-sort-down {
+    color:#1e0bc7
+}
+.sort-i {
+    position: absolute;
+    right: 0;
+    top: 2px;
+
+    font-size: 19px;
+}
 .char-panel, .battle-log-panel {
     flex: 1;
 
@@ -535,7 +583,7 @@ input[type="text"], input[type="number"], select {
 }
 
 
-@media screen and (max-width: 1560px) {
+@media screen and (max-width: 1565px) {
     .char-recen-act-txt {
         display: none;
     }

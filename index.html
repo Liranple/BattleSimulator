@@ -15,14 +15,14 @@
 
 <body>
     <header class="header">
-        <h1 class="main-headline">Artes Battle Simulator 0.22.1</h1>
+        <h1 class="main-headline">Artes Battle Simulator 0.22.2</h1>
             <i class="fas fa-cloud-upload-alt data-upload" onclick="dataUpload()"> SAVE</i>
             <i class="fas fa-cloud-download-alt data-download" onclick="dataDownload()"> LOAD</i>
     </header>
     <section class="section">
         <article class="article">
             <!-- ControlPanel -->
-            <div class="bs pl5">
+            <div class="bs pl5 pr5">
                 <!-- TimerPanel -->
                 <div class="top-panel mb10">
                     <!-- TimerPanel -->
@@ -71,12 +71,40 @@
                     <button type="button" data-key="heal" data-value="100" class="heal-btn f16 b" onclick="playerAction(this)">100회복</button>
                 </div>
                 <div class="group-panel mt10">
-                    <button class="all-select" onclick="allCharSel()">All</button>
-                    <button class="rest drag ml5" onclick="partyView(this)">휴식</button>
+                    <button class="rest drag" onclick="partyView(this)">휴식</button>
                 </div>
             </div>
+            <!-- SortPanel -->
+            <div class="sort-panel mt5">
+                <i class="fas fa-check-circle all-select" onclick="allCharSel()"></i>
+                <label class="sort-name" onclick="sortObj(this)">
+                    <span class="sort-t b">이름</span>
+                    <i class="fas fa-sort-up sort-i"></i>
+                    <i class="fas fa-sort-down sort-i"></i>
+                </label>
+                <label class="sort-dice" onclick="sortObj(this)">
+                    <span class="sort-t b">다이스</span>
+                    <i class="fas fa-sort-up sort-i"></i>
+                    <i class="fas fa-sort-down sort-i"></i>
+                </label>
+                <label class="sort-weapon" onclick="sortObj(this)">
+                    <span class="sort-t b">무기</span>
+                    <i class="fas fa-sort-up sort-i"></i>
+                    <i class="fas fa-sort-down sort-i"></i>
+                </label>
+                <label class="sort-armor" onclick="sortObj(this)">
+                    <span class="sort-t b">방어</span>
+                    <i class="fas fa-sort-up sort-i"></i>
+                    <i class="fas fa-sort-down sort-i"></i>
+                </label>
+                <label class="sort-hp" onclick="sortObj(this)">
+                    <span class="sort-t b">체력</span>
+                    <i class="fas fa-sort-up sort-i"></i>
+                    <i class="fas fa-sort-down sort-i"></i>
+                </label>
+            </div>
             <!-- CharacterPanel -->
-            <div class="char-panel mt5">
+            <div class="char-panel">
                 <div class="char-sheet rest" draggable="true">
                     <label>
                         <input type="checkbox" name="switch" class="input_on-off" />

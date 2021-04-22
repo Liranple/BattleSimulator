@@ -20,7 +20,8 @@ var monAtk;
 var monHp;
 var monType;
 var stun = false;
-var scar = false;
+var panic = false;
+var suddenCount = 5;
 var stunCount = 3;
 var stunImmune = 0;
 var actionReturn = false;
@@ -45,7 +46,7 @@ var dragged;
 
 document.addEventListener("dragstart", function(event) {
     dragged = event.target;
-  }, false);
+}, false);
 document.addEventListener("dragenter", function(event) {
     if (event.target.classList[1] == "drag") {
         event.target.style.width = "120px";
@@ -74,24 +75,116 @@ document.addEventListener("drop", function(event) {
     if (event.target.parentNode.classList[0] == "char-sheet") eTarget = event.target.parentNode;
     if (event.target.parentNode.parentNode.classList[0] == "char-sheet") eTarget = event.target.parentNode.parentNode;
 
-    for (let i = 0; i < $(".char-name").length; i++) {
-        if ($(".char-name")[i].value == dragged.children[1].value) var dragIndex = i;
-        if ($(".char-name")[i].value == eTarget.children[1].value) var targetIndex = i;
-    }
-    eTarget.before(dragged);
+    if (eTarget != undefined) {
+        for (let i = 0; i < $(".char-name").length; i++) {
+            if ($(".char-name")[i].value == dragged.children[1].value) var dragIndex = i;
+            if ($(".char-name")[i].value == eTarget.children[1].value) var targetIndex = i;
+        }
+        eTarget.before(dragged);
     if (dragIndex > targetIndex) $(".char-sheet")[dragIndex].after(eTarget);
     else if (dragIndex < targetIndex) $(".char-sheet")[dragIndex].before(eTarget);
+    }
 }, false);
 
-
-function colorChange(obj) {
-    if(obj.classList.contains("execution") && obj.selectedIndex > 4) {
-        obj.classList.replace = ("execution", "raid");
+function sortObj(obj) {
+    var sortObjs = $(".sort-panel").children();
+    if (obj.classList[1] == undefined || obj.classList.contains("sort-DESC")) {
+        for (let i = 1; i < sortObjs.length; i++) {
+            if (sortObjs[i].classList.contains("sort-ASC") || sortObjs[i].classList.contains("sort-DESC")) {
+                sortObjs[i].classList.remove("sort-ASC");
+                sortObjs[i].classList.remove("sort-DESC");
+            }
+        }
+        obj.classList.add("sort-ASC");
     }
-    else if(obj.classList.contains("raid") && obj.selectedIndex < 5) {
-        obj.classList.replace = ("raid", "execution");
+    else if (obj.classList.contains("sort-ASC")) {
+        for (let i = 1; i < sortObjs.length; i++) {
+            if (sortObjs[i].classList.contains("sort-ASC") || sortObjs[i].classList.contains("sort-DESC")) {
+                sortObjs[i].classList.remove("sort-ASC");
+                sortObjs[i].classList.remove("sort-DESC");
+            }
+        }
+        obj.classList.add("sort-DESC");
+    }
+    sortContent(obj, obj.classList[1]);
+}
+function sortContent(obj, type) {
+    var sortType = obj.classList[0];
+    var items = $(".char-sheet");
+    if (sortType == "sort-name") {
+        items.sort(function(a, b) {
+            if (type == "sort-ASC") {
+                return a.children[1].value == b.children[1].value
+                ? 0 : (a.children[1].value > b.children[1].value
+                ? 1 : -1);
+            }
+            if (type == "sort-DESC") {
+                return a.children[1].value == b.children[1].value
+                ? 0 : (a.children[1].value < b.children[1].value
+                ? 1 : -1);
+            }
+        });
+    }
+    if (sortType == "sort-dice") {
+        items.sort(function(a, b) {
+            var aa = a.children[2].children[0].checked
+            + a.children[3].children[0].checked
+            + a.children[4].children[0].checked;
+            var bb = b.children[2].children[0].checked
+            + b.children[3].children[0].checked
+            + b.children[4].children[0].checked;
+            if (type == "sort-ASC") return aa == bb ? 0 : (aa < bb ? 1 : -1);
+            if (type == "sort-DESC") return aa == bb ? 0 : (aa > bb ? 1 : -1);
+        });
+    }
+    if (sortType == "sort-weapon") {
+        items.sort(function(a, b) {
+            if (type == "sort-ASC") {
+                return a.children[5].value == b.children[5].value
+                ? 0 : (a.children[5].value < b.children[5].value
+                ? 1 : -1);
+            }
+            if (type == "sort-DESC") {
+                return a.children[5].value == b.children[5].value
+                ? 0 : (a.children[5].value > b.children[5].value
+                ? 1 : -1);
+            }
+        });
+    }
+    if (sortType == "sort-armor") {
+        items.sort(function(a, b) {
+            if (type == "sort-ASC") {
+                return a.children[6].value == b.children[6].value
+                ? 0 : (a.children[6].value < b.children[6].value
+                ? 1 : -1);
+            }
+            if (type == "sort-DESC") {
+                return a.children[6].value == b.children[6].value
+                ? 0 : (a.children[6].value > b.children[6].value
+                ? 1 : -1);
+            }
+        });
+    }
+    if (sortType == "sort-hp") {
+        items.sort(function(a, b) {
+            if (type == "sort-ASC") {
+                return a.children[7].value == b.children[7].value
+                ? 0 : (a.children[7].value < b.children[7].value
+                ? 1 : -1);
+            }
+            if (type == "sort-DESC") {
+                return a.children[7].value == b.children[7].value
+                ? 0 : (a.children[7].value > b.children[7].value
+                ? 1 : -1);
+            }
+        });
+    }
+    $(".char-panel").children().remove();
+    for (let i = 0; i < items.length; i++) {
+        $(".char-panel").append(items[i]);
     }
 }
+
 function createParty() {
     var partys = [];
     for (let i = 1; i < 9; i++) {
@@ -113,7 +206,7 @@ function partyView(obj) {
         $(".input_on-off")[i].checked = false;
     }
     for (let i = 0; i < $(".drag").length; i++) {
-        $(".drag")[i].style.opacity = 0.7;
+        $(".drag")[i].style.opacity = "";
     }
     obj.style.opacity = 1;
     nowParty = obj.classList[0];
@@ -212,13 +305,42 @@ window.onload = function() {
     
     battleLogPanel = document.getElementsByClassName("battle-log-panel")[0];
     startBtn = document.getElementsByClassName("fa-play")[0];
-    snackbar = $('#snackbar');
     charSheet = $(".char-sheet")[0].cloneNode();
+    $(".drag")[0].style.opacity = 1;
     createDropTable();
     createParty();
     // dataLoad();
 }
 
+function pp(str, particle) {
+    var strGA = 44032; //가
+    var strHI = 55203; //힣
+   
+    var lastStrCode = str.charCodeAt(str.length-1);
+    var prop = true;
+    var msg;
+   
+    for (let i = 2; i < str.length; i++) {
+        if (lastStrCode < strGA || lastStrCode > strHI) {
+            lastStrCode = str.charCodeAt(str.length-i);
+            if (i+1 == str.length) return str; //한글이 없음
+        }
+        else {
+            break;
+        }
+    }
+   
+    if (( lastStrCode - strGA ) % 28 == 0) prop = false;
+    if (prop) {
+        if (particle == "은는") msg = str+'은';
+        if (particle == "을를") msg = str+' 을';
+    }
+    else {
+        if (particle == "은는") msg = str+'는';
+        if (particle == "을를") msg = str+' 를';
+    }
+    return msg;
+}
 function getby(classname, num, int) {
     var panel = document.getElementsByClassName("char-sheet");
     return panel[num].getElementsByClassName(classname)[int];
@@ -236,7 +358,6 @@ function turnReset() {
         chars[i].dataset.key = JSON.stringify(key);
     }
     stun = false;
-    stunCount = 3;
     stunImmune = 0;
 }
 function logOutput(str) {
@@ -272,21 +393,22 @@ function battleStartPause(e) {
             battleStart = true;
             logOutput("전투 시작");
             br();
-            document.getElementsByClassName("turn-text")[0].innerText = "1";
+            $(".turn-text")[0].innerText = "1";
+            monHp = $(".monster-hp")[0];
+            monHp = monHp.options[monHp.selectedIndex];
         }
         else {
             logOutput("전투 재개");
             br();
         }
-        document.getElementsByClassName("monster-hp")[0].disabled = true;
+        $(".monster-hp")[0].disabled = true;
         increment();
         e.classList.replace("fa-play", "fa-pause");
     }
     else if (running) {
         running = false;
         clearTimeout(timerid);
-        var timer = document.getElementsByClassName("timer")[0].innerText;
-        logOutput(`전투 일시정지 중... [${timer}]`);
+        logOutput(`전투 일시정지 중... [${$(".timer")[0].innerText}]`);
         br();
         e.classList.replace("fa-pause", "fa-play");
     }
@@ -297,6 +419,8 @@ function battleReset() {
     battleStart = false;
     clearTimeout(timerid);
     turnReset();
+    stunCount = 3;
+    suddenCount = 5;
     time = 0;
     document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
     document.getElementsByClassName("timer-start-pause")[0].classList.replace("fa-pause", "fa-play");
@@ -304,6 +428,7 @@ function battleReset() {
     document.getElementsByClassName("monster-hp")[0].disabled = false;
     btnOnOff();
     battleLogPanel.innerHTML = " ";
+    monHp.value = monHp.innerHTML;
 }
 function increment() {
     if (running) {
@@ -333,19 +458,31 @@ function increment() {
                 if (subTime >= 36000) {
                     log = `${subHours}시간 `;
                 }
-                log += `${subMins}분 경과. ${subTurn}턴 입니다`;
+                log += `${subMins}분 경과. ${subTurn}턴 입니다.`;
                 logOutput(log);
                 br();
             }
             document.getElementsByClassName("timer")[0].innerText=`${hours} : ${mins} : ${secs}`;
             increment();
-        }, 100)
+        }, 99)
     }
 }
 
 function allCharSel() {
+    var charCheck = [];
     for (let i = 0; i < $(".char-sheet").length; i++) {
-        if(!$(".char-sheet")[i].classList.contains("hidden")) {
+        for (let j = 0; j < $(".input_on-off").length; j++) {
+            charCheck.push($(".input_on-off")[j].checked);
+        }
+        if(charCheck.every(function(check) {
+            return check == true;
+        })) {
+            var allCheck = true;
+        }
+        if(allCheck) {
+            $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = false;
+        }
+        else if(!$(".char-sheet")[i].classList.contains("hidden")) {
             $(".char-sheet")[i].getElementsByClassName("input_on-off")[0].checked = true;
         }
     }
@@ -495,17 +632,18 @@ function monsterItemDrop() {
         if (monsterItem.length != 0) {
             var chance = Math.floor(Math.random() * 100);
             for (let j = 0; j < monsterItem.length; j++) {
-                if (chance > monsterItem[j][1]) {
+                if (chance >= monsterItem[j][1]) {
                     var name = $(`.char-panel>.${nowParty}`)[i].getElementsByClassName("char-name")[0].value;
                     if (monsterItem[j][2] <= 3) {
                         logOutput(`정화 성공! ... 아니, 이것은!! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다!`);
+                        br();
                     }
                     else {
-                        if (monsterItem.length > 1) {
+                        if (monsterItem.length >= 1) {
                             logOutput(`정화 성공! ${name}은/는 ${monsterItem[j][0]} 을/를 얻었다.`);
+                            br();
                         }
                     }
-                    br();
                     break;
                 }
             }
@@ -528,94 +666,117 @@ function actionReady(i) {
     monType = monHp.options[monHp.selectedIndex].className;
     monHp = monHp.options[monHp.selectedIndex];
 }
-
 function monsterAtk() {
     var critical = chanceCalc(30);
-    var log;
     var totalDamage = monAtk.reduce((a, b) => a + b);
 
     if (critical) {
-        log = `마물이 회심의 일격을 가했다! 1.5 X `;
+        var log = `마물이 회심의 일격을 가했다! 1.5 X `;
         totalDamage = totalDamage * 1.5;
     }
     else {
-        log = `마물의 공격을 받았다! `;
+        var log = `마물의 공격을 받았다! `;
     }
     totalDamage -= armor;
-    if (totalDamage <= 0) {
-        totalDamage = 0;
-    }
-    charHp.value -= totalDamage;
+    if (totalDamage < 0) totalDamage = 0;
     log += `(${monAtk.join(" + ")}) - ${armor} = ${totalDamage}`;
     logOutput(log);
+    charNowHp(totalDamage);
 }
 function normalAtk() {
     if (stun) stunImmune -= 1;
     var critical = chanceCalc(30);
-    var log;
     var totalDamage = charAtk.reduce((a, b) => a + b);
 
     if (critical) {
-        log = `크리티컬! ${charName.value}의 강력한 일격이다! 1.5 X `;
+        var log = `크리티컬! ${charName.value}의 강력한 일격이다! 1.5 X `;
         totalDamage = totalDamage * 1.5;
     }
     else {
-        log = `${charName.value}의 공격! 마물에게 `;
+        var log = `${charName.value}의 공격! 마물에게 `;
     }
     totalDamage += Number(weapon);
-    monHp.value -= totalDamage;
     log += `(${charAtk.join(" + ")}) + ${weapon} = ${totalDamage} 피해를 주었다.`;
     logOutput(log);
-    if (monHp.value <= 0) monHp.value = 0;
-    var log = `마물의 남은 HP : ${monHp.value}`;
-    logOutput(log);
+    monNowHp(totalDamage);
 }
 function suddenAtk() {
-    scar = chanceCalc(30);
-    var totalDamage;
-    if (scar || stun) {
-        if (stun) stunImmune -= 1;
-        var log = `마물이 방심한 틈을 타 ${charName.value}의 기습 공격! `;
-        totalDamage = charAtk.reduce((a, b) => a + b) * 3;
-        log += `3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${totalDamage} 피해를 주었다`;
-        logOutput(log);
+    panic = chanceCalc(30);
+    var charDamage = charAtk.reduce((a, b) => a + b) * 3;
+    var monDamage = monAtk.reduce((a, b) => a + b) * 3;
+    var success;
+
+    if (suddenCount <= 0) {
+        logOutput("※ 이 마물은 더 이상 기습이 통하지 않습니다.");
+        panic = false;
+    }
+    if (stun) {
+        if (suddenCount <= 0) {
+            logOutput(`마물은 간신히 몸을 틀어 ${charName.value}의 기습을 피해냅니다.`);
+        }
+        else {
+            success = true;
+            stunImmune -= 1;
+            logOutput(`무력화된 마물에게 ${charName.value}의 기습 공격! 3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${charDamage} 피해를 주었다.`);
+        }
+    }
+    else if (panic) {
+        success = true;
+        logOutput(`마물이 방심한 틈을 타 ${charName.value}의 기습 공격! 3.0 X (${charAtk.join(" + ")}) + ${weapon} = ${charDamage} 피해를 주었다.`);
         logOutput("마물이 당황한 것 같다!");
-        monHp.value -= totalDamage;
-        if (monHp.value <= 0) monHp.value = 0;
-        var log = `마물의 남은 HP : ${monHp.value}`;
-        logOutput(log);
+        logOutput("※ 무력화 시도 시 확률이 상승합니다.");
     }
-    else { 
-        var log = `${charName.value}은/는/ 파고 들었지만 마물에게 간파 당했다! `;
-        totalDamage = monAtk.reduce((a, b) => a + b) * 3;
-        log += `3.0 X (${monAtk.join(" + ")}) = ${totalDamage} 역습으로 큰 피해를 받았다.`;
-        charHp.value -= totalDamage;
-        logOutput(log);
+    else {
+        success = false;
+        logOutput(`${pp(charName.value, "은는")} 파고 들었지만 마물에게 간파 당했다! 3.0 X (${monAtk.join(" + ")}) = ${monDamage} 역습으로 큰 피해를 받았다.`);
     }
+
+    suddenCount -= 1;
+    if (suddenCount >= 0) logOutput(`(남은 기습 횟수 : ${suddenCount})`);
+    if (suddenCount < 0) logOutput(`(남은 기습 횟수 : 0)`);
+
+    if (suddenCount == 0) {
+        logOutput("마물은 반복된 기습에 분노하며 온 신경을 곤두세웁니다.");
+    }
+
+    if (success) monNowHp(charDamage);
+    else if (!success) charNowHp(monDamage);
+    else ;
 }
+
+function charNowHp (damage) {
+    charHp.value -= damage;
+    logOutput(`${charName.value}의 남은 HP : ${charHp.value}`)
+}
+function monNowHp (damage) {
+    monHp.value -= damage;
+    if (monHp.value <= 0) monHp.value = 0;
+    logOutput(`마물의 남은 HP : ${monHp.value}`);
+}
+
 function stunAtk() {
     if (stun) {
         var log = "이미 무력화가 적용된 턴 입니다. 무효. 로그 재사용 불가.";
         actionReturn = true;
     }
     else {
-        stunCount -= 1;
-        if (scar) {
+        if (panic) {
             stun = chanceCalc(50);
-            var log = `당황한 마물에게 ${charName.value}이(가) 무력화를 시도 한다...! `;
+            var log = `당황한 마물에게 ${charName.value}이/가 무력화를 시도 한다...! `;
         }
         else {
-            stun = chanceCalc(100);
+            stun = chanceCalc(5);
             var log = `${charName.value}의 무력화! 과연? `;
         }
-        scar = false;
+        panic = false;
        
         var totalDamage;
         if (stun) {
+            stunCount -= 1;
             stunImmune = 10;
             log += "성공!";
             logOutput(log);
-            log = "마물이 다음 턴 까지 반격을 하지 않습니다.";
+            log = `마물이 이번 턴, 일정 공격 구간에 반격을 하지 않습니다. (남은 성공가능 횟수 : ${stunCount})`;
         }
         else {
             if (stunCount < 0) {
@@ -639,16 +800,17 @@ function healing(healPoint) {
 function battleEnd() {
     monHp.value = monHp.innerHTML;
     time = 0;
+    $(".turn-text")[0].innerText = "0";
     running = false;
     battleStart = false;
     clearTimeout(timerid);
-    document.getElementsByClassName("timer")[0].innerText = "00 : 00 : 00";
-    var startPause = document.getElementsByClassName("timer-start-pause")[0];
+    $(".timer")[0].innerText = "00 : 00 : 00";
+    var startPause = $(".timer-start-pause")[0];
     startPause.classList.replace("fa-pause", "fa-play");
-    document.getElementsByClassName("monster-hp")[0].disabled = false;
+    $(".monster-hp")[0].disabled = false;
     turnReset();
-    var atkBtn = document.getElementsByClassName("atk-btn");
-    logOutput(`전투 대기 중...`);
+    var atkBtn = $(".atk-btn");
+    logOutput(`전투 종료`);
     for (let i = 0; i < atkBtn.length; i++) {
         if (!running) {
             atkBtn[i].disabled = true;
@@ -774,7 +936,7 @@ function playerAction(e) {
                 battleResult();
             }
             else if (charHp.value == 0) {
-                swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다.`);
+                swal("Caution!", `${charName.value}은/는 사망하여 더 이상 행동할 수 없습니다`);
             }
             else {
                 logOutput(`${charName.value}은/는 이번 턴에 더 이상 행동할 수 없다. 무효. 로그 재사용 불가.`);
